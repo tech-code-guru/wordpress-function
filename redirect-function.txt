@@ -1,0 +1,12 @@
+
+<?php 
+function my_page_template_redirect()
+{
+    if( is_page( '206' ) && ! is_user_logged_in() )
+    {
+        wp_redirect( home_url() );
+        exit();
+    }
+}
+add_action( 'template_redirect', 'my_page_template_redirect' );
+?>

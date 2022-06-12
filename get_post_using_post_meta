@@ -1,0 +1,24 @@
+<?php
+
+global $wpdb;
+global $post;
+
+$post_author_meta_value='BY : LYDIA NEUBAUER';
+$sm_args = array(
+    'posts_per_page' => get_option('posts_per_page'),
+    'meta_query' => array(
+        array(
+            'key' => 'post_credit',
+            'value' => $post_author_meta_value
+        )
+    )
+);
+ 
+$posts = get_posts($sm_args);
+//echo '<pre>';
+//print_r($posts);
+foreach ($posts as $post) {
+echo $post->post_title;
+
+}
+?>

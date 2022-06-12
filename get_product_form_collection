@@ -1,0 +1,43 @@
+<section class="prodct_sction_about">
+    <div class="container paddg_0">
+        <div class="row">
+            <div class="col-md-12 headg_product">
+                <h5>shop our top selling</h5>
+            </div>
+
+            {% if collections.top-selling.products.size > 0 %}
+
+{% for product in collections.top-selling.products %}
+
+  <div class="col-md-4 col-xs-12 col-sm-6">
+                <div class="prodct_list">
+                     <img src="{{ product.featured_image | product_img_url: 'medium' }}" alt="{{ product.title | escape  }}" />    
+
+                    <div class="onsale_tag">
+                        <span>12-pack</span>
+                    </div>
+                    <div class="product_deatils">
+                        <h5>{{ product.title | escape  }} <span>{{ product.price | money}}</span></h5>
+						<div class="btn_lstg">
+							<ul>
+								<li class="active"><a href="{{ product.url }}">almond</a></li>
+								<li><a href="">cashew</a></li>
+								<li><a href="">combo</a></li>
+							</ul>
+						</div>
+                        <button type="button" class="btn btn-outline-dark">add to cart</button>
+                    </div>
+                </div>
+            </div>
+
+
+{% endfor %}
+
+{% endif %}
+
+            
+         
+
+        </div>
+    </div>
+</section>

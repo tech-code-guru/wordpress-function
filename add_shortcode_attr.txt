@@ -1,0 +1,33 @@
+<?php 		
+			function test_function($atts)
+	{	
+	
+	 $atts = shortcode_atts(
+		array(
+			'post_type' => '',
+			'post_status' => ''
+		), $atts, 'sm_don' );
+		
+		$post_type=$atts['post_type'];
+		 $post_status=$atts['post_status'];
+
+		global $wpdb;
+		$myquery=array
+						(
+						'post_type'=>'post',
+						'post_status'=>'puplish'
+						);
+					$result=query_posts($myquery);
+		//$sql="SELECT * FROM  `wp_posts` WHERE  `post_status` =  '$post_status'AND  `post_type` =  '$post_type'";
+		//$result=$wpdb->get_results($sql);
+		foreach ($result as $abc)
+		{
+?>
+	<h1 style="color:red;"><?php echo $abc->post_title; ?></h1>
+	
+	<?php }
+	
+	}
+add_shortcode('sm_don', 'test_function');
+
+?>

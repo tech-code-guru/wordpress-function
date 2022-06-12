@@ -1,0 +1,5 @@
+<script>
+$(document).ready(function() {
+$("a[href*='https://www.manchesterprinters.com/print/promo-products/']").attr('href', 'https://www.manchesterprinters.com/promotionalproducts/');
+});
+</script>

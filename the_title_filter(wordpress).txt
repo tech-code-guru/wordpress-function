@@ -1,0 +1,8 @@
+function TitleFunction($title) {
+	global $post;
+ 
+   $title = $title. ' ' .get_the_date('Y');
+
+    return $title;
+}
+add_filter( 'the_title', 'TitleFunction', 10, 2 );

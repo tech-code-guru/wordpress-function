@@ -1,0 +1,6 @@
+jQuery(document).ready(function()
+   {
+      jQuery('a').each(function(){
+      this.href = this.href.replace('s1600-h', 's1600');
+   }); 
+   });

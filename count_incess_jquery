@@ -1,0 +1,5 @@
+   var i = 1;
+jQuery('.tp-bullet').each(function(){
+    jQuery(this).html(i);
+i++;
+});

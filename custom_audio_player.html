@@ -1,0 +1,105 @@
+   
+<script>
+$(
+  function(){
+  var aud = $('#music_audio')[0];
+  $('.play-pause').on('click', function(){
+  if (aud.paused) {
+    aud.play();
+    $('.play-pause').removeClass('icon-play');
+	
+    $('.play-pause').addClass('icon-stop');
+	//alert(aud.duration * 100);
+	 
+    var md = parseInt(aud.duration / 60) % 60;
+	var sd = parseInt(aud.duration % 60);
+	$('.song_duration').html(md + ':0'+ sd);
+
+	
+  }
+  else {
+    aud.pause();
+	//alert('stop');
+
+    $('.play-pause').removeClass('icon-stop');
+    $('.play-pause').addClass('icon-play');
+  }
+  
+})
+//
+  $('.fast_forword').on('click', function(){
+	  aud.currentTime += 30.0;
+	  });
+	  
+	  $('.back_forword').on('click', function(){
+	  aud.currentTime -= 30.0;
+	  });	
+		
+  aud.ontimeupdate = function(){
+    $('.progress').css('width', aud.currentTime / aud.duration * 100 + '%');
+	
+	  //Get hours and minutes
+    var s = parseInt(aud.currentTime % 60);
+    var m = parseInt(aud.currentTime / 60) % 60;
+    if(s < 10){
+      s = '0'+s;
+    }
+    $('.timer_show').html(m + ':'+ s);
+
+  }
+})
+
+</script>
+
+<audio id="music_audio"  src='https://candokidsband.com/wp-content/uploads/2020/02/Can-Do-Kids-Brazil.mp3'></audio>
+
+<div class='player'>
+
+  <div class='btns'>
+    <div class="timer_show"></div><div class='progress'></div><br><div class="song_duration"></div>
+    <button class="back_forword">Back forward</button><button class="iconfont play-pause icon-play">Play</button><button class="fast_forword">Fast forward</button>	
+	</div>
+  
+
+</div>
+<style>
+.player {
+  position: relative;
+  width: 500px;
+  height: 60px;
+  background-color: rgba(0,0,0,0.2);
+  display: flex;
+  border-radius: 2px;
+  padding: 5 16px;
+  img {
+    margin-top: 5px;
+    width: 60px;
+    height: 50px;
+  }
+  
+  .btns {
+    width: 50%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 16px;
+    
+    div:nth-child(1) {
+            font-size: 30px;
+        }
+        div:nth-child(2), div:nth-child(3) {
+            font-size: 18px;
+        }
+    
+  }
+  .progress {
+    position: absolute;
+    height: 2px;
+    left: 0;
+    top: 0;
+    background-color: #00a8ff;
+  }
+}
+
+
+</style>

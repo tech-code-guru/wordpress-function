@@ -1,0 +1,73 @@
+ 
+{% schema %}
+  {
+    "name": "Testimonials",
+    "settings": [
+
+      {
+        "id": "sm_testimonials1",
+        "type": "richtext",
+        "label": "Testimonials 1",
+        "default": "<p>content</p>"
+      },
+{
+        "id": "sm_testimonials2",
+        "type": "richtext",
+        "label": "Testimonials 2",
+        "default": "<p>content</p>"
+      },
+{
+        "id": "sm_testimonials3",
+        "type": "richtext",
+        "label": "Testimonials 3",
+"default": "<p>content</p>"
+      },
+{
+        "id": "sm_testimonials4",
+        "type": "richtext",
+        "label": "Testimonials 4",
+        "default": "<p>content</p>"
+      },
+{
+        "id": "sm_testimonials5",
+        "type": "richtext",
+        "label": "Testimonials 6",
+        "default": "<p>content</p>"
+      },
+{
+        "id": "sm_testimonials6",
+        "type": "richtext",
+        "label": "Testimonials 6",
+        "default": "<p>content</p>"
+      },
+{
+        "id": "sm_testimonials7",
+        "type": "richtext",
+        "label": "Testimonials 7",
+        "default": "<p>content</p>"
+      },
+{
+        "id": "sm_testimonials8",
+        "type": "richtext",
+        "label": "Testimonials 8",
+        "default": "<p>content</p>"
+      },
+{
+        "id": "sm_testimonials9",
+        "type": "richtext",
+        "label": "Testimonials 9",
+        "default": "<p>content</p>"
+      }
+]
+  }
+{% endschema %}
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}
+
+
+=======================get=============
+ {{ section.settings.about_page_product }}

@@ -1,0 +1,45 @@
+ <script src="https://code.jquery.com/jquery-1.10.2.js" type="text/javascript" charset="utf-8"></script>
+
+
+<script type="text/javascript">
+   /* $(document).ready(function()
+    {
+        var checkData = $("#cartItemNumber").val();
+        var checkLenght = checkData.length;
+        console.log(checkLenght);
+        if (checkLenght=="")
+        {
+    $(".cart_item_qty").hide();
+        }
+    });
+ */
+</script>
+
+<!--===================Replace text=======================-->
+       <script type="text/javascript">
+    $(document).ready(function() {
+     $(".cart_item_qty1").text(function(index, text) {
+     return text.replace('simple', 'demo');
+  });
+    });
+  </script>
+    
+    <div class="cart_item_qty1">This is simple text</div>
+    
+    
+    
+
+<!--===================Limit text and added ...=======================-->
+
+    <script type="text/javascript" charset="utf-8">
+
+        jQuery(document).ready(function($){
+    $(".cart_item_qty1").each(function(){
+            if ($(this).text().length > 100) {
+                $(this).text($(this).text().substr(0, 2)); 
+                $(this).append('...');
+            }
+        });
+});
+    </script>
+​

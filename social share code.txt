@@ -1,0 +1,12 @@
+https://www.doitwithwp.com/add-sharing-buttons-to-wordpress-no-plugins-or-external-references/
+
+
+
+ <div class="post-socials">
+						 <ul>
+						      <li><a href="https://www.facebook.com/sharer/sharer.php ?s=100 &p[title]=<?php the_title(); ?> &p[summary]=Example description text &p[url]=<?php echo post_permalink($postdata->ID); ?> &p[images][0]=<?php echo $sm_image[0];?>"><img src="<?php echo get_template_directory_uri(); ?>/images/header-facebook@2x-min.png"> </a> </li>
+                              <li><a href="#"><img src="<?php echo get_template_directory_uri(); ?>/images/header-instagram@2x-min.png"> </a> </li>
+                              <li><a href="http://twitter.com/home/?status=<?php the_title(); ?> - <?php the_permalink(); ?>"><img src="<?php echo get_template_directory_uri(); ?>/images/header-twitter@2x-min.png"> </a> </li>
+                              <li><a href="http://pinterest.com/pin/create/button/?url=<?php the_permalink(); ?>&media=<?php $url = wp_get_attachment_url( get_post_thumbnail_id($post->ID) ); echo $url; ?>"><img src="<?php echo get_template_directory_uri(); ?>/images/header-pinterest@2x-min.png"> </a> </li>
+                           </ul>
+                        </div>

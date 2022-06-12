@@ -1,0 +1,3 @@
+<?php $post_id=$abc->ID; ?>
+
+<?php echo $values = get_post_meta($post_id, 'post_views_count', true ); ?>

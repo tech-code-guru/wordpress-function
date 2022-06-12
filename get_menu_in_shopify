@@ -1,0 +1,9 @@
+<ul class="navbar-nav float-right ryt_navbr mobl_hide sm_mobile_menu2">
+                    {% for link in linklists.header-top-menu.links %}
+                     <li class="nav-item"><a  class="nav-link"  href="{{ link.url }}">{{ link.title }}</a></li>
+                   {% endfor %}
+                </ul>
+
+//                    {% for link in linklists.header-top-menu.links %}
+
+header-top-menu-----menu name in admin

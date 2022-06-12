@@ -1,0 +1,53 @@
+<?php
+add_action( 'add_meta_boxes', 'sm_meta_box_add' );
+function sm_meta_box_add()
+{
+add_meta_box(
+    'my-meta-box-id',
+    'Email Address',
+    'sm_meta_box',
+    'reviews',         
+    'side',        
+    'default'       
+  );
+  
+  add_meta_box(
+    'my-meta-box-id',
+    'qq Address',
+    'sm_meta_box',
+    'reviews',         
+    'side',        
+    'default'       
+  );
+  }
+function sm_meta_box()
+{
+    global $post;
+	$email_address = get_post_meta($post->ID, 'sm_meta_box_email', true);
+	$review_rating = get_post_meta($post->ID, 'sm_meta_box_review_rating', true);
+
+
+    ?>
+    <p>
+        <label for="sm_meta_box_email">Email:</label>
+        <input type="text" name="sm_meta_box_email" id="sm_meta_box_email" value="<?php echo $email_address; ?>" size="100%" />
+    </p>
+      <p>
+        <label for="sm_meta_box_review_rating">Reviews:</label>
+        <input type="text" name="sm_meta_box_review_rating" id="sm_meta_box_review_rating" value="<?php echo $review_rating; ?>" size="100%" />
+    </p>
+    
+    <?php    
+}
+add_action( 'save_post', 'sm_meta_box_save' );
+function sm_meta_box_save( $post_id )
+{
+    
+    if( isset( $_POST['sm_meta_box_email'] ) )
+        update_post_meta( $post_id, 'sm_meta_box_email', $_POST['sm_meta_box_email']);
+	
+	if( isset( $_POST['sm_meta_box_review_rating'] ) )
+        update_post_meta( $post_id, 'sm_meta_box_review_rating', $_POST['sm_meta_box_review_rating']);
+         
+}
+?>

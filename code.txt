@@ -1,0 +1,21 @@
+<?php
+$posts_array = get_posts( $args ); 
+
+
+echo '<pre>';
+print_r($posts_array);
+echo '</pre>';
+
+?>
+
+
+-----------------------------------------------------
+
+
+
+<?php
+query_posts('cat=1');
+while (have_posts()) : the_post();
+the_content();
+endwhile;
+?>

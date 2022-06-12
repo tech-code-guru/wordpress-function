@@ -1,0 +1,34 @@
+<script type="text/javascript">
+	//@sm script
+	/*
+    jQuery(document).ready(function(){
+    
+	var resizeTimer;
+	jQuery(window).resize(function(e) {
+	clearTimeout(resizeTimer);
+	resizeTimer = setTimeout(function() {
+	    if (jQuery(window).width() > 1025) {
+	       //leave blank
+	       //jQuery(document).find('.culture-clone').remove();
+	       //jQuery(document).find('.sradio-clone').remove();
+
+	    }
+
+	else {
+
+
+	         // culture menu
+	var cloneUlculture = jQuery('.header_cart_fragments').clone();
+	//jQuery(cloneUlculture).addClass('culture-clone');
+	//jQuery('.sm_podcast_menu').remove();
+	jQuery(".sm_bootom_icon a").after(cloneUlculture);
+
+
+
+	    }
+
+	},100);
+	});
+	});
+	*/
+</script>

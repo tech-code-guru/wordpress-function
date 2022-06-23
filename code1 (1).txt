@@ -1,0 +1,1765 @@
+<?php
+
+get_header();
+?>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+
+<div class="customComparisonPage">
+   <div class="customComparisonPage__maniBanner">
+    <div class="ComparisonPageContainer">
+
+    	<?php if(get_field('milling_title')): ?>
+      		<h2><?php the_field('milling_title'); ?></h2>
+      	<?php endif; ?>
+
+      <ul class="customComparisonPage__machineList mob_menu_both">
+		<?php
+		while( have_rows('milling_list') ) : the_row();                
+		$link = get_sub_field('link');
+   
+		?>  
+      		<li><a href="<?php echo $link['url']; ?>"><?php echo $link['title']; ?></a></li>
+          <?php endwhile; ?> 
+          <li class="customComparisonPage__machineList__dropdown"><a href="javascript:void(0);" class="mob_menu_click"><svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 65.5 14.9" style="enable-background:new 0 0 65.5 14.9;" xml:space="preserve">
+<style type="text/css"> 
+	.st0{fill:#FFFFFF;}
+</style>
+<path id="XMLID_30_" class="st0" d="M7.8,14.5c-1.8,0-3.7-0.8-5-2.1s-2-3.1-2-4.9c0-1.8,0.8-3.6,2-5c1.3-1.3,3.1-2,5-2
+	c1.8,0,3.6,0.8,4.9,2c1.3,1.3,2.1,3.1,2.1,5c0,1.8-0.8,3.6-2.1,4.9C11.4,13.7,9.6,14.5,7.8,14.5z M37.7,12.4
+	c1.3-1.3,2.1-3.1,2.1-4.9c0-1.8-0.8-3.6-2.1-5c-1.3-1.3-3.1-2-4.9-2c-1.8,0-3.7,0.8-5,2c-1.3,1.3-2,3.1-2,5c0,1.8,0.8,3.6,2,4.9
+	c1.3,1.3,3.1,2.1,5,2.1C34.6,14.5,36.4,13.7,37.7,12.4z M62.7,12.4c1.3-1.3,2.1-3.1,2.1-4.9c0-1.8-0.8-3.6-2.1-5
+	c-1.3-1.3-3.1-2-4.9-2s-3.7,0.8-5,2c-1.3,1.3-2,3.1-2,5c0,1.8,0.8,3.6,2,4.9c1.3,1.3,3.1,2.1,5,2.1C59.6,14.5,61.4,13.7,62.7,12.4z"
+	/> 
+</svg>
+</a>
+<ul class="customComparisonPage__machineList__dropdown__list">
+    <li><a href="#">5X-300 PRO</a></li>
+    <li><a href="#">300 series</a></li>
+</ul>
+</li> 
+      </ul>
+      
+      <div class="full_search_row">
+      <div class="customComparisonPage__maniBanner__searchBar">
+          <a href="javascript:void(0);" class="customComparisonPage__maniBanner__searchBar__filter" title="Please click here"><svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30.27 31.99"><defs><style>.cls-1{fill:none;}.cls-1,.cls-2{stroke:#4c4948;stroke-linecap:round;stroke-linejoin:round;stroke-width:2.99px;}.cls-2{fill:#fcfcfc;}</style></defs><title>Please click here</title><line class="cls-1" x1="1.49" y1="4.83" x2="28.78" y2="4.83"/><line class="cls-1" x1="1.49" y1="16.33" x2="28.78" y2="16.33"/><line class="cls-1" x1="1.49" y1="27.83" x2="28.78" y2="27.83"/><circle class="cls-2" cx="7.78" cy="4.49" r="3"/><circle class="cls-2" cx="22.78" cy="16.49" r="3"/><circle class="cls-2" cx="7.78" cy="27.49" r="3"/></svg></a>
+          <form>
+              <input type="text" name="" class="search_key" placeholder="">
+              <button type="submit"><svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32.87 28.48"><defs><style>.cls-1{fill:none;stroke:#4c4948;stroke-linecap:round;stroke-linejoin:round;stroke-width:2.99px;}</style></defs><title>banner__Search__icon</title><g id="search_button" data-name="search button"><circle class="cls-1" cx="13.52" cy="13.51" r="11.74"/><line class="cls-1" x1="23.33" y1="19.95" x2="31.12" y2="26.42"/></g></svg></button>
+          </form>
+
+      </div>
+      
+
+      <div class="customComparisonPage__maniBanner__toggle">
+      <div class="customComparisonPage__maniBanner__searchFilter">
+      	<form class="filter_form">
+          <div class="customComparisonPage__maniBanner__searchFilter__top">
+
+               <div class="customRow">
+
+                   <div class="customCol__md__6">
+                       
+
+               <div class="customRow">
+
+                   <div class="customCol__md__6 searchFilter__brRight">
+                       <h3>Axis</h3>
+                       <h3>Processing</h3>
+                       <h3>Spindle Power DC | AC</h3>
+                   </div><!-- col -->
+
+
+                   <div class="customCol__md__6">
+					<ul class="click_axis click_common customComparisonPage__maniBanner__searchFilter__selector">
+						<li data-val="5"><a><input type="radio" name="click_axis" value="5" id="">5 Axis</a></li>
+						<li data-val="4"><a><input type="radio" name="click_axis" value="4" id="">4 Axis</a></li>
+					</ul>
+					<ul class="click_processing click_common customComparisonPage__maniBanner__searchFilter__selector">
+						<li data-val="Wet"><a><input type="radio" name="click_processing" value="Wet" id="">Wet</a> </li>
+						<li data-val="Dry"><a><input type="radio" name="click_processing" value="Dry" id="">Dry</a></li>
+					</ul>
+               		<ul class="click_kw click_common customComparisonPage__maniBanner__searchFilter__selector">
+                   <li data-val="AC"><a><input type="radio" name="click_kw" value="AC" id="">1kW</a> <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+     viewBox="0 0 15.75 21.08" style="enable-background:new 0 0 15.75 21.08;" xml:space="preserve">
+<style type="text/css">
+    .st0{fill:none;stroke:#010101;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;}
+</style>
+<g>  
+    <line class="st0" x1="7.88" y1="1.31" x2="7.88" y2="19.32"/>
+    <polyline class="st0" points="14.49,12.32 7.88,19.77 1.26,12.32     "/>
+</g>
+</svg></li><li data-val="DC"><a><input type="radio" name="click_kw" value="DC" id="">1kW</a> <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+     viewBox="0 0 15.75 21.08" style="enable-background:new 0 0 15.75 21.08;" xml:space="preserve">
+<style type="text/css">
+    .st0{fill:none;stroke:#010101;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;}
+</style>
+<g>
+    <line class="st0" x1="7.88" y1="19.77" x2="7.88" y2="1.77"/>
+    <polyline class="st0" points="14.49,8.77 7.88,1.31 1.26,8.77    "/>
+</g>
+</svg>
+</li> 
+                   </ul>
+                   </div><!-- col -->
+               
+               </div><!-- row  -->
+
+
+                   </div><!-- col -->
+
+
+                   <div class="customCol__md__6">
+                       
+
+               <div class="customRow">
+
+                   <div class="customCol__md__6 searchFilter__brRight">
+                       <h3>Motor</h3>
+                       <h3>Disk Jig<br>
+Cartridge Type</h3>
+                   </div><!-- col -->
+
+
+                   <div class="customCol__md__6">
+					<ul class="click_motor click_common customComparisonPage__maniBanner__searchFilter__selector">
+						<li data-val="Servo"><a><input type="radio" name="click_motor" value="Servo" id="">Servo</a></li>
+						<li data-val="Stepping"><a><input type="radio" name="click_motor" value="Stepping" id="">Stepping</a></li>
+					</ul>
+					<ul class="click_disk_type click_common customComparisonPage__maniBanner__searchFilter__selector">
+						<li data-val="C type"><a><input type="radio" name="click_disk_type" value="C type" id="">C type</a> </li>
+						<li data-val="O type"><a><input type="radio" name="click_disk_type" value="O type" id="">O type</a></li>
+					</ul>
+                   </div><!-- col -->
+               
+               </div><!-- row  -->
+
+                   </div><!-- col -->
+               
+               </div><!-- row  -->
+          </div><!-- top -->
+
+
+
+
+          <div class="customComparisonPage__maniBanner__searchFilter__bottom customComparisonPage__maniBanner__searchFilter__bottomBorder">
+          <h3>Materials</h3>
+            <ul class="click_materials click_common customComparisonPage__maniBanner__searchFilter__selector">
+                   <li data-val="Pre-milled Blank" data-extra="Pre-milledBlank" class="tablinks Pre-milledBlank"><a><input name="materials" value="Pre-milled Blank" type="checkbox" />Pre-milled Blank</a></li>
+                   <li data-val="Co-Cr & Ni-Cr Disk" data-extra="Co-Cr_Ni-CrDisk" class="tablinks Co-Cr_Ni-CrDisk"><a><input name="materials" value="Co-Cr & Ni-Cr Disk" type="checkbox" />Co-Cr & Ni-Cr Disk</a></li>
+                   <li data-val="Titanium Disk" data-extra="TitaniumDisk"  class="tablinks TitaniumDisk"><a><input name="materials" value="Titanium Disk" type="checkbox" />Titanium Disk</a></li>
+                   <li data-val="Lithium Disilicate" data-extra="LithiumDisilicate" class="tablinks LithiumDisilicate"><a><input name="materials" value="Lithium Disilicate" type="checkbox" />Lithium Disilicate</a></li>
+                   <li data-val="Nanocomposite" data-extra="Nanocomposite" class="tablinks Nanocomposite"><a><input name="materials" value="Nanocomposite" type="checkbox" />Nanocomposite</a></li>
+                   <li data-val="Zirconia" data-extra="Zirconia" class="tablinks Zirconia"><a><input name="materials" value="Zirconia" type="checkbox" />Zirconia</a></li>
+                   <li data-val="PMMA" data-extra="PMMA" class="tablinks PMMA"><a><input name="materials" value="PMMA" type="checkbox" />PMMA</a></li>
+                   <li data-val="PEEK" data-extra="PEEK" class="tablinks PEEK"><a><input name="materials" value="PEEK" type="checkbox" />PEEK</a></li>
+                   <li data-val="Wax" data-extra="Wax" class="tablinks Wax"><a><input name="materials" value="Wax" type="checkbox" />Wax</a></li>
+                   </ul>
+          </div><!-- Bottom -->
+
+           <div class="customComparisonPage__maniBanner__searchFilter__bottom">
+          <h3>Applications</h3>
+			<ul class="new_applications click_common customComparisonPage__maniBanner__searchFilter__selector">
+				<li data-val="Implant Bar" data-extra="ImplantBar" class="tablinks ImplantBar">
+				    <a><input name="new_applications" value="Implant Bar" type="checkbox" />Implant Bar</a>
+				</li>
+				<li data-val="Screw-Retained Bridge" data-extra="Screw-RetainedBridge" class="tablinks Screw-RetainedBridge">
+				    <a><input name="new_applications" value="Screw-Retained Bridge" type="checkbox" />Screw-Retained Bridge</a>
+				</li>
+				<li data-val="Customized Abutment" data-extra="CustomizedAbutment" class="tablinks CustomizedAbutment">
+				    <a><input name="new_applications" value="Customized Abutment" type="checkbox" />Customized Abutment</a>
+				</li>
+				<li data-val="Hybrid Abutmen" data-extra="HybridAbutment" class="tablinks HybridAbutment">
+				    <a><input name="new_applications" value="Hybrid Abutmen" type="checkbox" />Hybrid Abutment</a>
+				</li>
+				<li data-val="Inlay & Onlay" data-extra="InlayOnlay" class="tablinks InlayOnlay">
+				    <a><input name="new_applications" value="Inlay & Onlay" type="checkbox" />Inlay & Onlay</a>
+				</li>
+				<li data-val="Crown & Coping" data-extra="CrownCoping" class="tablinks CrownCoping">
+				    <a><input name="new_applications" value="Crown & Coping" type="checkbox" />Crown & Coping</a>
+				</li>
+				<li data-val="Crown & Coping Bridge" data-extra="CrownCopingBridge" class="tablinks CrownCopingBridge">
+				    <a><input name="new_applications" value="Crown & Coping Bridge" type="checkbox" />Crown & Coping Bridge</a>
+				</li>
+				<li data-val="Model" data-extra="Model" class="tablinks Model">
+				    <a><input name="new_applications" value="Model" type="checkbox" />Model</a>
+				</li>
+				<li data-val="Bite Splint" data-extra="BiteSplint" class="tablinks BiteSplint">
+				    <a><input name="new_applications" value="Bite Splint" type="checkbox" />Bite Splint</a>
+				</li>
+				<li data-val="Denture" data-extra="Denture" class="tablinks Denture">
+				    <a><input name="new_applications" value="Denture" type="checkbox" />Denture</a>
+				</li> 
+			</ul>
+          </div><!-- Bottom -->
+	      
+   
+ 	</form> 
+      </div><!-- filter -->
+
+<ul  style="display: none;" class="SelectedTagsList customComparisonPage__maniBanner__searchSelectedTags">
+     <li>5 Axis <img src="<?php echo site_url(); ?>/wp-content/uploads/2022/04/filterTag__close__icon-01.svg">
+
+</li>
+<li>Dry <img src="<?php echo site_url(); ?>/wp-content/uploads/2022/04/filterTag__close__icon-01.svg"></li>
+<li>Nanocomposite <img src="<?php echo site_url(); ?>/wp-content/uploads/2022/04/filterTag__close__icon-01.svg"></li>
+</ul><!-- ul -->
+<div class="display_selected_tags"></div>
+</div>
+<ul class="SelectedTagsList customComparisonPage__maniBanner__searchSelectedTags"></ul>
+	<div class="container">
+		<div class="search_product_list" style="margin-top: 50px ;"></div>
+	</div>
+
+      <ul class="customComparisonPage__maniBanner__searchSelectedProducts" style="display: none;">
+
+         <li> <div class="customComparisonPage__compareMillingMachineModels__mainImg"><img src="<?php echo site_url(); ?>/wp-content/uploads/2022/04/500L_FRONT.png"></div><!-- img -->
+          
+<h4>ARUM 5X-500L</h4><a class="customComparisonPage__basicBtn" href="#">Learn More <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+          viewBox="0 0 11.18 19.75" style="enable-background:new 0 0 11.18 19.75;" xml:space="preserve">
+          <style type="text/css">
+          st0{fill:none;stroke:#F39F00;stroke-width:3.448;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;}
+          </style>
+          <polyline class="st0" points="1.85,1.83 9.33,9.88 1.85,17.92 "/>
+          </svg>
+          </a>
+      </li>
+         <li><div class="customComparisonPage__compareMillingMachineModels__mainImg"><img src="<?php echo site_url(); ?>/wp-content/uploads/2022/04/4x100.png"></div><!-- img -->
+          
+<h4>ARUM 4X-100</h4><a class="customComparisonPage__basicBtn" href="#">Learn More <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+          viewBox="0 0 11.18 19.75" style="enable-background:new 0 0 11.18 19.75;" xml:space="preserve">
+          <style type="text/css">
+          st0{fill:none;stroke:#F39F00;stroke-width:3.448;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;}
+          </style>
+          <polyline class="st0" points="1.85,1.83 9.33,9.88 1.85,17.92 "/>
+          </svg>
+          </a>
+      </li>
+      </ul><!-- selected products -->
+
+      </div>
+  </div> <!-- container -->
+   </div><!-- banner -->
+
+ 
+<script>
+$(document).ready(function(){
+
+
+
+     
+		/*
+		$(document).on('click','.tablinks',function(){
+			var content_id = $(this).data('val');
+			//$('.'+content_id).addClass('active');
+
+			console.log('content_id', content_id);
+			var new_applications=[];
+			 new_applications.push($(this).data('val'));
+
+    		console.log(new_applications); 
+   
+		});
+		*/
+
+
+
+	/*	
+const storage1 = localStorage.getItem("data"); 
+	const storage = JSON.parse(storage1);
+
+	const list = Object.keys(storage).map(key => ({
+	[key]: storage[key]
+	}));
+
+		console.log(list); 
+
+	const filteredList = list.filter(item => Object.keys(item)[0] !== '1');
+
+	console.log(filteredList); 
+
+	localStorage.setItem("data", JSON.stringify(filteredList));
+
+	*/
+
+  $(".click_materials").click(function(){
+    var materials = [];
+    $.each($("input[name='materials']:checked"), function(){
+        materials.push($(this).val());
+    });
+ 
+   
+
+    //alert("here " + favorite.join(", "));
+});
+ 
+
+
+ 
+	function showValues() {
+
+	var fields = $( ".filter_form :input" ).serializeArray();
+
+	const array = $( ".filter_form :input" ).serializeArray();
+        const json_data = {};
+        $.each(array, function () {
+          json_data[this.name] = this.value || "";
+        });
+  
+    //console.log(json_data);
+
+	//var ajax_data = $( ".filter_form :input" ).serialize();
+	var search_key=$(".search_key").val();
+
+	// console.log(materials);
+ 
+		$.ajax({
+				type: 'POST',
+				url: '<?php echo admin_url('admin-ajax.php'); ?>',
+				data: {
+				   "action": "search_func",
+				   "search_key": search_key,
+			        data : json_data,
+			        fields:fields
+				},
+
+				beforeSend: function() {
+				},
+				success: function(result){
+
+					$('.search_product_list').html(result)
+					//$('.left_model_data').hide();
+					
+			}
+		}); 
+
+
+	$( ".SelectedTagsList" ).empty();
+	jQuery.each( fields, function( i, field ) {
+
+	/* display tags */   
+
+	if(field.value ==4 || field.value ==5) {
+		$( ".SelectedTagsList" ).append('<li data-val="'+field.value+'">'+field.value+' Axis <img data-val="'+field.value+'" data-key="click_motor" class="remove_tags" src="<?php echo site_url(); ?>/wp-content/uploads/2022/04/filterTag__close__icon-01.svg"></li>');
+	 } else if(field.value =="AC") {
+		$( ".SelectedTagsList" ).append('<li data-val="'+field.value+'">1kW<img class="arrow_img" src="<?php echo site_url(); ?>/wp-content/uploads/2022/05/down_arrow.svg"><img data-val="'+field.value+'" data-key="click_motor" class="remove_tags" src="<?php echo site_url(); ?>/wp-content/uploads/2022/04/filterTag__close__icon-01.svg"></li>');
+	 } else if(field.value =="DC") {
+
+			$( ".SelectedTagsList" ).append('<li data-val="'+field.value+'">1kW<img class="arrow_img" src="<?php echo site_url(); ?>/wp-content/uploads/2022/05/up_arrow.svg"><img data-val="'+field.value+'" data-key="click_motor" class="remove_tags" src="<?php echo site_url(); ?>/wp-content/uploads/2022/04/filterTag__close__icon-01.svg"></li>');
+	 } else {
+
+		$( ".SelectedTagsList" ).append('<li data-val="'+field.value+'">'+field.value+'<img data-val="'+field.value+'" data-key="click_motor" class="remove_tags" src="<?php echo site_url(); ?>/wp-content/uploads/2022/04/filterTag__close__icon-01.svg"></li>');
+
+	 } 
+
+
+	});
+
+	}
+ 
+	$( ":checkbox, :radio" ).click( showValues );
+	//$( "select" ).change( showValues );
+	//showValues();
+
+
+$(".search_key").keydown(function(){
+  var search_key=$(".search_key").val();
+
+  console.log(search_key);
+ 	showValues(); 
+
+
+});  
+	
+
+$(document).on('click','.tablinks',function(){
+	var content_id = $(this).data('extra');
+
+	console.log(content_id);
+
+	$('.'+content_id).toggleClass('active');
+
+}); 
+
+
+ 
+
+
+//console.log(materials);
+
+/*
+$(".new_applications").click(function(){
+    var applications = [];
+    $.each($("input[name='new_applications']:checked"), function(){
+        applications.push($(this).val());
+    });
+ 
+    click_common(materials,applications); 
+
+    //alert("here " + favorite.join(", "));
+});
+
+
+$(".click_axis").click(function(){
+ 
+click_common(); 
+
+});
+
+$(".click_processing").click(function(){
+ 
+click_common(); 
+
+});
+$(".click_kw").click(function(){
+ 
+click_common(); 
+
+});
+
+$(".click_disk_type").click(function(){
+ 
+click_common(); 
+
+});
+
+$(".click_motor").click(function(){
+ 
+click_common(); 
+ 
+});
+ 
+*/
+ 
+/* active li */
+function active_fun(name) {
+var a = document.querySelectorAll("."+name+" a");
+        for (var i = 0, length = a.length; i < length; i++) {
+          a[i].onclick = function() {
+            var b = document.querySelector("."+name+"  li.active");
+            if (b) b.classList.remove("active");
+            this.parentNode.classList.add('active');
+          };
+        }
+} 
+
+
+active_fun('f');
+active_fun('left_model_list');
+
+active_fun('click_axis');
+active_fun('click_processing');
+active_fun('click_motor');
+active_fun('click_disk_type');
+
+active_fun('click_kw');
+
+//active_fun('click_applications');
+//active_fun('click_materials');
+ 
+/* end active li */ 
+
+   			var click_axis='';
+   			var click_processing='';
+   			var click_motor='';
+			var click_disk_type='';
+			var click_kw='';
+			var materials=[];
+			var applications=[];
+
+			function click_common(materials,applications) {
+			var search_key=$(".search_key").val();
+			if(search_key) {
+
+				 var data= {  
+				'search_key' : search_key
+				}; 
+
+			}
+			else {
+
+			var click_axis= $('.click_axis li.active').attr('data-val');
+
+		    var click_processing= $('.click_processing li.active').attr('data-val');
+		    var click_motor= $('.click_motor li.active').attr('data-val');
+		    var click_disk_type= $('.click_disk_type li.active').attr('data-val');
+ 		    var click_kw= $('.click_kw li.active').attr('data-val');
+
+ 		    var click_materials= $('.click_materials li.active').attr('data-val');
+ 		    var click_applications= $('.click_applications li.active').attr('data-val');
+
+		   // var x  = localStorage.getItem("mytime");
+              console.log('under function'); 
+
+		    var data= {  
+				'click_axis' : click_axis,
+				'click_processing' : click_processing,
+				'click_motor' : click_motor,
+				'click_disk_type' : click_disk_type,
+				'click_kw' : click_kw,
+				'click_materials' : click_materials,
+				'click_applications' : click_applications
+				}; 
+
+
+
+			var new_data = [
+				{click_axis:click_axis},
+				{click_processing:click_processing},
+				{click_motor:click_motor},
+				{click_disk_type:click_disk_type},
+				{click_kw:click_kw},
+				{click_materials:materials},
+				{click_applications:applications},
+			];
+	
+ 
+			localStorage.setItem("new_data", JSON.stringify(new_data)); 
+ 
+			var get_data = localStorage.getItem("new_data");
+
+			/* get selected tags */
+			var obj = JSON.parse(get_data);
+
+		
+
+			//$('.display_selected_tags').html('<ul class="SelectedTagsList customComparisonPage__maniBanner__searchSelectedTags">'+html+'</ul>');
+
+			 /*/// End get selected tags */
+
+			var get_data = localStorage.getItem("new_data");
+
+			/* get selected tags */
+			var obj = JSON.parse(get_data);
+
+			console.log('reched');
+			console.log(obj); 
+
+			let html='';
+			$.each(obj, function(index, value){
+			//$(".display_selected_tags").append(index + ": " + value.click_axis + '<br>');
+
+			var click_axis=value.click_axis;
+			var click_processing=value.click_processing;
+			var click_kw=value.click_kw;
+			var click_motor=value.click_motor;
+			var click_disk_type=value.click_disk_type;
+			var click_materials=value.click_materials;
+			var click_applications=value.click_applications;
+
+			console.log('click_materials', click_materials);
+
+			
+
+			if(click_axis){
+				html +='<li data-val='+click_axis+'>'+click_axis+' Axis<img data-val='+click_axis+' data-key="click_axis" class="remove_tags" src="<?php echo site_url(); ?>/wp-content/uploads/2022/04/filterTag__close__icon-01.svg"></li>';
+			}
+			if(click_processing){
+				html +='<li data-val='+click_processing+' >'+click_processing+'<img data-val='+click_processing+' data-key="click_processing" class="remove_tags" src="<?php echo site_url(); ?>/wp-content/uploads/2022/04/filterTag__close__icon-01.svg"></li>';
+			}
+
+			if(click_motor){
+				html +='<li data-val='+click_motor+'>'+click_motor+'<img data-val='+click_motor+' data-key="click_motor" class="remove_tags" src="<?php echo site_url(); ?>/wp-content/uploads/2022/04/filterTag__close__icon-01.svg"></li>';
+			}
+			if(click_disk_type){
+				html +='<li data-val="'+click_disk_type+'">'+click_disk_type+'<img data-val="'+click_disk_type+'"  data-key="click_disk_type" class="remove_tags" src="<?php echo site_url(); ?>/wp-content/uploads/2022/04/filterTag__close__icon-01.svg"></li>';
+			}
+			 
+			if(click_materials){
+				html +='<li>'+click_materials.join(", ")+'<img data-val='+click_materials+' class="remove_tags" src="<?php echo site_url(); ?>/wp-content/uploads/2022/04/filterTag__close__icon-01.svg"></li>';
+			}
+			if(click_applications){
+				html +='<li>'+click_applications.join(", ")+'<img data-val='+click_applications.join(", ")+' class="remove_tags" src="<?php echo site_url(); ?>/wp-content/uploads/2022/04/filterTag__close__icon-01.svg"></li>';
+			} 
+			 
+			 
+
+			//$('.display_selected_tags').html('<ul class="SelectedTagsList customComparisonPage__maniBanner__searchSelectedTags">'+html+'</ul>');
+
+			});
+		}
+
+ 			/*
+		    $.ajax({
+					type: 'POST',
+					url: '<?php //echo admin_url('admin-ajax.php'); ?>',
+					data: {
+					   "action": "search_func",
+				        data : data
+					},
+
+					beforeSend: function() {
+					},
+					success: function(result){
+
+						$('.search_product_list').html(result)
+						//$('.left_model_data').hide();
+						
+				}
+			}); 
+			*/
+
+		}
+  
+  /* remove tags */
+
+ $(document).on('click', '.remove_tags',function(e){
+			e.preventDefault();
+			 var tags= $(this).data('val');
+
+
+			$("input:checkbox[value='"+tags+"']").prop('checked', false);
+
+
+
+			var click_axis= $('.click_axis li.active').attr('data-val');
+
+		    var click_processing= $('.click_processing li.active').attr('data-val');
+		    var click_motor= $('.click_motor li.active').attr('data-val');
+		    var click_disk_type= $('.click_disk_type li.active').attr('data-val');
+ 		    var click_kw= $('.click_kw li.active').attr('data-val');
+
+ 		  			//console.log(click_axis); 
+
+ 		    if(click_axis == tags) {
+
+
+ 		     	console.log('reched--here');
+
+			var click_axis= $('.click_axis li.active').attr('data-val');
+			$('.click_axis li.active').removeClass('active');
+			$("input:radio[value="+tags+"]").prop('checked', false);
+
+			showValues();  
+
+ 		    }
+
+ 		     if(click_processing == tags) {
+
+
+			 var click_processing= $('.click_processing li.active').attr('data-val');
+			 $('.click_processing li.active').removeClass('active');
+
+			$("input:radio[value="+tags+"]").prop('checked', false);
+
+			showValues(); 
+
+ 		    }
+
+ 		    if(click_motor == tags) {
+
+			 var click_motor= $('.click_motor li.active').attr('data-val');
+			 $('.click_motor li.active').removeClass('active');
+
+			$("input:radio[value="+tags+"]").prop('checked', false);
+
+			showValues(); 
+ 		    }
+ 
+ 		     if(click_disk_type == tags) {
+
+			 var click_disk_type= $('.click_disk_type li.active').attr('data-val');
+			 $('.click_disk_type li.active').removeClass('active');
+
+			$("input:radio[value='"+tags+"']").prop('checked', false);
+
+			showValues(); 
+
+ 		    }
+ 		    
+ 		     if(click_kw == tags) {
+
+			 var click_kw= $('.click_kw li.active').attr('data-val');
+			 $('.click_kw li.active').removeClass('active');
+
+			 $("input:radio[value="+tags+"]").prop('checked', false);
+
+			showValues(); 
+
+ 		    } 
+
+ 		    showValues(); 
+
+ 		    $('.SelectedTagsList [data-val="'+tags+'"]').hide();
+
+			$("input:checkbox[value='"+tags+"']").prop('checked', false);
+			$("input:checkbox[value='"+tags+"']").prop('checked', false);
+			$("li[data-val='"+tags+"']").removeClass('active');
+
+ 		    var click_materials= $('.click_materials li.active').attr('data-val');
+ 		    var click_applications= $('.click_applications li.active').attr('data-val');
+
+
+
+ 		    if(click_materials == tags) {
+
+ 		    console.log('click_materials');
+ 		     //console.log('click_materials');
+
+
+
+			 var click_materials= $('.click_materials li.active').attr('data-val');
+			 $('.click_materials li.active').removeClass('active');
+			$("input:checkbox[value='"+tags+"']").prop('checked', false);
+
+
+			 showValues(); 
+ 
+ 		    } 
+
+ 		     if(click_applications == tags) {
+
+			 var click_applications= $('.click_applications li.active').attr('data-val');
+			 $('.click_applications li.active').removeClass('active');
+
+			 $("input:checkbox[value='"+tags+"']").prop('checked', false);
+ 
+
+			 showValues(); 
+
+ 		    }  
+
+		   // var x  = localStorage.getItem("mytime");
+
+
+  
+
+				/*
+			  $.ajax({
+					type: 'POST',
+					url: '<?php echo admin_url('admin-ajax.php'); ?>',
+					data: {
+					   "action": "search_func",
+				        data : data
+					},
+
+					beforeSend: function() { 
+					},
+					success: function(result){
+
+						$('.search_product_list').html(result)
+						//$('.left_model_data').hide();
+						
+				}
+			}); 
+			*/
+
+
+
+}); 
+
+  
+
+  
+}); 
+</script> 
+<style type="text/css">
+  
+.click_common a {
+color: #333333;
+cursor: pointer;
+text-decoration: none;
+} 
+.click_common a:hover {
+    color: #f39f00;
+    text-decoration: none;
+
+} 
+.click_common li.active a {
+    color: #f39f00;
+} 
+
+img.remove_tags:hover {
+    cursor: pointer;
+}
+</style>
+<?php if(get_field('help_title')): ?>
+<?php $help_link=get_field('help_link'); 
+
+
+ ?>
+
+	<div class="customComparisonPage__Gethelpchoosing">
+		<div class="ComparisonPageContainer">
+			<div class="customRow">
+				<div class="customCol__md__5">
+					<div><h2><?php the_field('help_title'); ?></h2></div>
+					<a href="<?php echo $help_link['url']; ?>" class="d-mobile-none"><?php echo $help_link['title']; ?> <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+     viewBox="0 0 11.18 19.75" style="enable-background:new 0 0 11.18 19.75;" xml:space="preserve"><style type="text/css"> .st0{fill:none;stroke:#F39F00;stroke-width:3.448;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;}</style><polyline class="st0" points="1.85,1.83 9.33,9.88 1.85,17.92 "/></svg>
+					</a>
+				</div><!-- col -->
+				<?php if(get_field('help_image')): ?>
+				<div class="customCol__md__7"><img src="<?php the_field('help_image'); ?>">
+<a href="<?php echo $help_link['url']; ?>" class="d-desktop-none"><?php echo $help_link['title']; ?> <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+     viewBox="0 0 11.18 19.75" style="enable-background:new 0 0 11.18 19.75;" xml:space="preserve"><style type="text/css"> .st0{fill:none;stroke:#F39F00;stroke-width:3.448;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;}</style><polyline class="st0" points="1.85,1.83 9.33,9.88 1.85,17.92 "/></svg>
+					</a>
+				</div><!-- col -->
+				<?php endif; ?>
+			</div><!-- row -->
+		</div><!-- container  -->
+	</div><!-- section  -->
+<?php endif; ?>
+
+<?php 
+
+$compare_link=get_field('compare_link');  
+
+$default_left_model=get_field('default_left_model');  
+$default_right_model=get_field('default_right_model');  
+
+
+$lpost_id = $default_left_model->ID;
+$rpost_id = $default_right_model->ID;
+
+$exclude_post=array($lpost_id,$rpost_id); 
+ 
+?>
+
+	<div class="customComparisonPage__compareMillingMachineModels here_modal_sec">
+		<div class="ComparisonPageContainer">
+			<?php if(get_field('compare_title')): 
+			 $help_link=get_field('compare_link'); 
+
+
+				?>
+				<div class="text-center"><h2><?php the_field('compare_title'); ?></h2>
+			<?php endif; ?>
+                <a class="customComparisonPage__basicBtn" href="javascript:void(0)"  data-toggle="modal" data-target="#myModel"><?php echo $help_link['title']; ?> <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 11.18 19.75" style="enable-background:new 0 0 11.18 19.75;" xml:space="preserve"><style type="text/css">.st0{fill:none;stroke:#F39F00;stroke-width:3.448;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;}</style><polyline class="st0" points="1.85,1.83 9.33,9.88 1.85,17.92 "/></svg>
+				</a>
+			</div> 
+ 
+
+                       
+
+	<div class="customRow">
+		<div class="customCol__md__6 text-center">
+		  
+			<div class="customComparisonPage__dropDown">
+				<a href="#" data-type="1" class="left_selected_name"><?php echo $default_left_model->post_title; ?> <img src="<?php echo site_url(); ?>/wp-content/uploads/2022/04/dropDown__BlackIcon.svg"></a>
+				<ul class="left_model_list">
+	<?php
+	$args = array(
+	'post_type'  => 'arum_machine',
+	'post_status' => 'publish',
+	'order'    => 'ASC',
+	'posts_per_page' => 30
+	);
+
+	$result = new WP_Query( $args );
+	if ( $result-> have_posts() ) : 
+	
+	?>
+
+	<?php while ( $result->have_posts() ) : $result->the_post();
+		$post_id=get_the_ID();
+	 ?>
+	 
+	<li class="<?php if($lpost_id == $post_id){ echo 'active'; } else { echo ''; } ?> model_<?php the_id(); ?>"><a data-type="1" data-name="<?php the_title(); ?>" data-id="<?php the_id(); ?>" class="click_models" href="javascript:void(0)">
+	<img src="<?php echo site_url(); ?>/wp-content/uploads/2022/04/dropDown__check__inputIcon.svg" class="<?php if($lpost_id == $post_id){ echo ''; } else { echo 'custom-opacity-0'; } ?>"><?php the_title(); ?></a></li>	<?php endwhile; ?>
+	<?php endif; wp_reset_postdata(); ?> 
+	 
+				</ul>
+			</div><!-- drop down -->
+
+			
+		</div><!-- col --> 
+	   
+		<div class="customCol__md__6 text-center">
+		  
+			<div class="customComparisonPage__dropDown herereched"> 
+			 <a href="javascript:void(0)" data-type="2" class="right_selected_name"><?php echo $default_right_model->post_title; ?> <img src="<?php echo site_url(); ?>/wp-content/uploads/2022/04/dropDown__BlackIcon.svg"></a>
+				<ul class="right_model_list"> 
+	<?php
+	$args = array(
+	'post_type'  => 'arum_machine',
+	'post_status' => 'publish',
+	'order'    => 'ASC',
+	'posts_per_page' => 30
+	);
+
+	$result = new WP_Query( $args );
+	if ( $result-> have_posts() ) : 
+
+	?> 
+
+	<?php while ( $result->have_posts() ) : $result->the_post();
+		$post_id=get_the_ID();
+
+	 ?>
+	<li class="<?php if($rpost_id == $post_id){ echo 'active'; } else { echo ''; } ?> model_<?php the_id(); ?>"><a data-type="2" data-name="<?php the_title(); ?>" data-id="<?php the_id(); ?>" class="click_models" href="javascript:void(0)"><img src="<?php echo site_url(); ?>/wp-content/uploads/2022/04/dropDown__check__inputIcon.svg" class="<?php if($rpost_id == $post_id){ echo ''; } else { echo 'custom-opacity-0'; } ?>"><?php the_title(); ?></a></li>	<?php endwhile; ?>
+	<?php endif; wp_reset_postdata(); ?>
+	
+				</ul>
+			</div><!-- drop down -->
+			
+			
+			
+			
+		</div><!-- col --> 
+	</div><!-- custom row  -->
+
+			
+<div class="customRow">
+	<div class="customCol__md__6 text-center">
+		<div class="model_defaut_data left_model_ajax_data"> 
+
+		</div>
+			<div class="model_defaut_data left_model_data"> 
+
+			    <div class="customComparisonPage__compareMillingMachineModels__mainImg">
+
+				<?php if (has_post_thumbnail( $lpost_id ) ):
+					$image = wp_get_attachment_image_src( get_post_thumbnail_id( $lpost_id ), 'single-post-thumbnail' ); 
+				?>
+					<img src="<?php echo $image[0]; ?>">
+
+				<?php endif; ?>
+				<?php 
+
+				$machine_page=get_field('machine_page', $lpost_id );
+				//echo '<br>';
+				//print_r($machine_page->ID);
+				$l_machine_page_link=$machine_page->ID;
+
+			?>
+
+			    </div><a class="customComparisonPage__basicBtn" href="<?php echo get_permalink($l_machine_page_link); ?>">Learn More <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 11.18 19.75" style="enable-background:new 0 0 11.18 19.75;" xml:space="preserve"> <style type="text/css">st0{fill:none;stroke:#F39F00;stroke-width:3.448;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;}</style><polyline class="st0" points="1.85,1.83 9.33,9.88 1.85,17.92 "></polyline></svg></a>
+			    <hr class="customComparisonPage__compareMillingMachineModels__divider">
+ 
+
+				<ul class="customComparisonPage__compareMillingMachineModels__compareList text-center">
+					<li><span class="big--text"><?php echo get_post_meta($lpost_id, 'axies', true); ?></span> Axis</li>
+					<li>Max <span class="big--text"><?php echo number_format(get_post_meta($lpost_id, 'rpm', true)); ?></span> <span class="middium--text">RPM</span></li>
+					<li><span class="big--text element--block"><?php echo get_post_meta($lpost_id, 'spindle_power_type', true); ?> <?php echo get_post_meta($lpost_id, 'spindle_power', true); ?>kw</span> Spindle Power</li>
+					<li><span class="big--text"><?php echo get_post_meta($lpost_id, 'atc', true); ?></span> A.T.C</li>
+					<li><span class="big--text element--block"><?php echo get_post_meta($lpost_id, 'tool_shankmm', true); ?>mm</span>Tool Shank</li>
+					<li><span class="big--text element--block"><?php echo get_post_meta($lpost_id, 'motor', true); ?></span>Motor</li>
+					<?php /*<li><span class="big--text element--block"><?php echo implode(',', get_post_meta($lpost_id, 'processing', true)); ?></span>Processing</li> */ ?>
+					<li><span class="big--text element--block"><?php echo get_post_meta($lpost_id, 'drive_mechanism', true); ?></span>Drive Mechanism</li>
+					<li><span class="big--text element--block"><?php echo get_post_meta($lpost_id, 'way_system', true); ?></span>Way System</li>
+					<?php /*<li><span class="big--text element--block"><?php echo get_post_meta($lpost_id, 'travel__xyz_axis', true); ?></span>Travel X,Y,Z axis</li>
+					<li><span class="big--text element--block"><?php echo get_post_meta($lpost_id, 'travel_a__b_axis', true); ?></span>Travel A / B axis</li>
+					*/?>
+					<li><span class="big--text element--block">
+					<?php 
+					if(get_post_meta($lpost_id, 'disk_jig_or_cartridge_type', true)){
+					echo implode(',', get_post_meta($lpost_id, 'disk_jig_or_cartridge_type', true)); 
+
+					} else {
+
+						echo '-';
+					}
+					?>
+						
+					</span>Cartridge</li>
+					<?php /*<li><span class="big--text element--block">
+					<?php if(get_post_meta($lpost_id, 'number_of_jig', true)): echo  get_post_meta($lpost_id, 'number_of_jig', true); else: echo '-'; endif; ?></span>Number of Jig</li> 
+					<li><span class="big--text element--block">
+				<?php if(get_post_meta($lpost_id, 'jig_exchange', true)):  echo get_post_meta($lpost_id, 'jig_exchange', true); else: echo  '-'; endif; ?></span>Jig exchange</li> */ ?>
+				</ul>
+
+ 
+				<h3>Size &amp; Weight</h3>
+				<ul class="customComparisonPage__compareMillingMachineModels__compareList compareList--withBoldText">
+					<li><?php echo get_post_meta($lpost_id, 'total_size_w*d*h', true); ?><span class="small--text--28 element--block"></span></li>
+
+					<li><?php echo get_post_meta($lpost_id, 'weight_machine__table', true); ?><span class="small--text--23 element--block">Machine | Table</span></li>
+
+				</ul>
+
+				<h3>Materials</h3>
+				<ul class="customComparisonPage__compareMillingMachineModels__compareList text-center compareList--withBoldText"> 
+					<?php echo data_exists($lpost_id,'pre-milled_blank_titanium','Pre-milled Blank (Titanium)'); ?>
+					<?php echo data_exists($lpost_id,'co-cr_&_ni-cr_disk','Co-Cr & Ni-Cr Disk'); ?>
+					<?php echo data_exists($lpost_id,'titanium_disk','Titanium Disk'); ?>
+					<?php echo data_exists($lpost_id,'lithium_disilicate','Lithium Disilicat'); ?>
+					<?php echo data_exists($lpost_id,'nanocomposite','Nanocomposite'); ?>
+					<?php echo data_exists($lpost_id,'zirconia','Zirconia'); ?>
+					<?php echo data_exists($lpost_id,'pmma','Pmma'); ?>
+					<?php echo data_exists($lpost_id,'peek','Peek'); ?>
+					<?php echo data_exists($lpost_id,'wax','Wax'); ?>
+				</ul> 
+
+				<h3>Applications</h3>
+				<ul class="customComparisonPage__compareMillingMachineModels__compareList text-center compareList--withBoldText">
+					<?php echo data_exists($lpost_id,'implant_bar','Implant Bar'); ?>
+					<?php echo data_exists($lpost_id,'screw-retained_bridge','Screw-Retained Bridge'); ?>
+					<?php echo data_exists($lpost_id,'customized_abutment','Customized Abutment'); ?>
+					<?php echo data_exists($lpost_id,'lithium_disilicate','Lithium Disilicat'); ?>
+					<?php echo data_exists($lpost_id,'hybrid_abutment','Hybrid Abutment'); ?>
+					<?php echo data_exists($lpost_id,'inlay_&_onlay','Inlay & Onlay'); ?>
+					<?php echo data_exists($lpost_id,'crown_&_coping','Crown & Coping'); ?>
+					<?php echo data_exists($lpost_id,'crown_&_coping_bridge','Crown & Coping Bridge'); ?>
+					<?php echo data_exists($lpost_id,'model','Model'); ?>
+					<?php echo data_exists($lpost_id,'bite_splint','Bite Splint'); ?>
+					<?php echo data_exists($lpost_id,'denture','Denture'); ?>
+				</ul>
+		</div> 
+	</div>
+
+<div class="customCol__md__6 text-center">
+	<div class="model_defaut_data right_model_ajax_data"> 
+
+	</div>
+			<div class="model_defaut_data right_model_data"> 
+
+		    <div class="customComparisonPage__compareMillingMachineModels__mainImg">
+
+			<?php if (has_post_thumbnail( $rpost_id ) ):
+				$image = wp_get_attachment_image_src( get_post_thumbnail_id( $rpost_id ), 'single-post-thumbnail' ); 
+			?>
+				<img src="<?php echo $image[0]; ?>">
+			<?php endif; ?>
+			<?php 
+
+				$machine_page=get_field('machine_page', $rpost_id );
+				//echo '<br>';
+				//print_r($machine_page->ID);
+				$machine_page_link=$machine_page->ID;
+
+			?>
+		 
+		    </div><a class="customComparisonPage__basicBtn" href="<?php echo get_permalink($machine_page_link); ?>">Learn More <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 11.18 19.75" style="enable-background:new 0 0 11.18 19.75;" xml:space="preserve"> <style type="text/css">st0{fill:none;stroke:#F39F00;stroke-width:3.448;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;}</style><polyline class="st0" points="1.85,1.83 9.33,9.88 1.85,17.92 "></polyline></svg></a>
+		    <hr class="customComparisonPage__compareMillingMachineModels__divider">
+
+
+		 
+			<ul class="customComparisonPage__compareMillingMachineModels__compareList text-center">
+				<li><span class="big--text"><?php echo get_post_meta($rpost_id, 'axies', true); ?></span> Axis</li>
+				<li>Max <span class="big--text"><?php echo number_format(get_post_meta($rpost_id, 'rpm', true)); ?></span> <span class="middium--text">RPM</span></li>
+<li><span class="big--text element--block"><?php echo get_post_meta($rpost_id, 'spindle_power_type', true); ?> <?php echo get_post_meta($rpost_id, 'spindle_power', true); ?>kw</span> Spindle Power</li>				<li><span class="big--text"><?php echo get_post_meta($rpost_id, 'atc', true); ?></span> A.T.C</li>
+				<li><span class="big--text element--block"><?php echo get_post_meta($rpost_id, 'tool_shankmm', true); ?>mm</span>Tool Shank</li>
+				<li><span class="big--text element--block"><?php echo get_post_meta($rpost_id, 'motor', true); ?></span>Motor</li>
+				<?php /*<li><span class="big--text element--block"><?php echo implode(',', get_post_meta($rpost_id, 'processing', true)); ?></span>Processing</li> */ ?>
+				<li><span class="big--text element--block"><?php echo get_post_meta($rpost_id, 'drive_mechanism', true); ?></span>Drive Mechanism</li>
+				<li><span class="big--text element--block"><?php echo get_post_meta($rpost_id, 'way_system', true); ?></span>Way System</li>
+				<?php /*<li><span class="big--text element--block"><?php echo get_post_meta($rpost_id, 'travel__xyz_axis', true); ?></span>Travel X,Y,Z axis</li>
+				<li><span class="big--text element--block"><?php echo get_post_meta($rpost_id, 'travel_a__b_axis', true); ?></span>Travel A / B axis</li>
+				*/?>
+			 	
+			 	<li><span class="big--text element--block"><?php echo implode(',', get_post_meta($rpost_id, 'disk_jig_or_cartridge_type', true)); ?></span>Cartridge </li>
+				<?php /*<li><span class="big--text element--block">
+				<?php if(get_post_meta($rpost_id, 'number_of_jig', true)): echo  get_post_meta($rpost_id, 'number_of_jig', true); else: echo '-'; endif; ?></span>Number of Jig</li>
+				<li><span class="big--text element--block">
+				<?php if(get_post_meta($rpost_id, 'jig_exchange', true)):  echo get_post_meta($rpost_id, 'jig_exchange', true); else: echo  '-'; endif; ?></span>Jig exchange</li>
+				*/?>
+			</ul>
+
+
+				<h3>Size &amp; Weight</h3> 
+				<ul class="customComparisonPage__compareMillingMachineModels__compareList compareList--withBoldText">
+					<li><?php echo get_post_meta($rpost_id, 'total_size_w*d*h', true); ?><span class="small--text--28 element--block"></span></li>
+
+					<li><?php echo get_post_meta($rpost_id, 'weight_machine__table', true); ?><span class="small--text--23 element--block">Machine | Table</span></li>
+				</ul>
+
+		   		
+				<h3>Materials</h3>
+				<ul class="customComparisonPage__compareMillingMachineModels__compareList text-center compareList--withBoldText">
+					<?php echo data_exists($lpost_id,'pre-milled_blank_titanium','Pre-milled Blank (Titanium)'); ?>
+					<?php echo data_exists($lpost_id,'co-cr_&_ni-cr_disk','Co-Cr & Ni-Cr Disk'); ?>
+					<?php echo data_exists($lpost_id,'titanium_disk','Titanium Disk'); ?>
+					<?php echo data_exists($lpost_id,'lithium_disilicate','Lithium Disilicat'); ?>
+					<?php echo data_exists($lpost_id,'nanocomposite','Nanocomposite'); ?>
+					<?php echo data_exists($lpost_id,'zirconia','Zirconia'); ?>
+					<?php echo data_exists($lpost_id,'pmma','Pmma'); ?>
+					<?php echo data_exists($lpost_id,'peek','Peek'); ?>
+					<?php echo data_exists($lpost_id,'wax','Wax'); ?>
+				</ul> 
+
+				<h3>Applications</h3>
+				<ul class="customComparisonPage__compareMillingMachineModels__compareList text-center compareList--withBoldText">
+					<?php echo data_exists($lpost_id,'implant_bar','Implant Bar'); ?>
+					<?php echo data_exists($lpost_id,'screw-retained_bridge','Screw-Retained Bridge'); ?>
+					<?php echo data_exists($lpost_id,'customized_abutment','Customized Abutment'); ?>
+					<?php echo data_exists($lpost_id,'lithium_disilicate','Lithium Disilicat'); ?>
+					<?php echo data_exists($lpost_id,'hybrid_abutment','Hybrid Abutment'); ?>
+					<?php echo data_exists($lpost_id,'inlay_&_onlay','Inlay & Onlay'); ?>
+					<?php echo data_exists($lpost_id,'crown_&_coping','Crown & Coping'); ?>
+					<?php echo data_exists($lpost_id,'crown_&_coping_bridge','Crown & Coping Bridge'); ?>
+					<?php echo data_exists($lpost_id,'model','Model'); ?>
+					<?php echo data_exists($lpost_id,'bite_splint','Bite Splint'); ?>
+					<?php echo data_exists($lpost_id,'denture','Denture'); ?>
+				</ul>
+
+		</div> 
+	</div> 
+</div>
+ 
+		</div><!-- container  -->
+	</div><!-- section  -->
+
+ <!-- Modal -->
+  <div class="modal fade" id="myModel" role="dialog">
+    <div class="modal-dialog">
+    
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+        <div class="modal-body">
+          
+<div class="ComparisonPageModal__tableOverlay">
+<div class="ComparisonPageModal__table">
+    <h2>ARUM Milling Machine Line-up</h2>
+    <div class="ComparisonPageModal__table__closer"><img src="<?php echo site_url(); ?>/wp-content/uploads/2022/04/compPopCorssIcon.png"></div>
+   <div class="customRow">
+        
+
+        <div class="customCol__md__6">
+            <div class="ComparisonPageModal__table__topImg">
+                <img src="<?php echo site_url(); ?>/wp-content/uploads/2022/04/comparision__popUPSplitImages.png">
+            </div><!-- img -->
+    
+            <div class="ComparisonPageModal__table__bars">
+                <div class="ComparisonPageModal__table__bars__blue">Metal Disk</div>
+                <div class="ComparisonPageModal__table__bars__lightgtGray">Pre-milled Bank</div>
+                <div class="ComparisonPageModal__table__bars__darkGray">Zirconia Block</div>
+            </div><!-- bars -->
+           
+
+
+            <div class="ComparisonPageModal__table__tableContainer">
+              
+              <table class="ComparisonPageModal__table__tableContainer__model">
+					<thead>
+					<tr>
+					<th>Model</th>
+					<?php
+
+					$args = array(
+					'post_type'  => 'arum_machine',
+					'post_status' => 'publish',
+					'order'    => 'ASC',
+					'posts_per_page' => 30
+					);
+
+
+					$limit=1;
+					$result = new WP_Query( $args );
+					if ( $result-> have_posts() ) : ?>
+					<?php while ( $result->have_posts() ) : $result->the_post();
+					$post_id=get_the_ID();
+
+					 ?>
+					<?php if($limit <= 5 ): ?>
+						<th class="post_id_<?php echo $post_id; ?>"><?php the_title(); ?></th>
+					<?php endif; ?>
+					<?php $limit++; endwhile; ?>
+					<?php endif; wp_reset_postdata(); ?>
+					</tr>
+					</thead>
+                  <tbody>
+                      
+                      <tr>
+                          <td>Axis</td>
+							 <?php echo model_data('axies',''); ?>
+                      </tr> 
+
+ 
+                      <tr> 
+                          <td>Processing</td>
+                          <?php echo model_data('processing',''); ?>
+
+                      </tr> 
+
+                      <tr>
+                          <td>Max. RPM</td>
+                          <?php echo model_data('rpm',''); ?>
+                      </tr>
+
+ 
+                      <tr>
+                          <td>Spindle Power</td>
+                         <?php echo model_data('spindle_power',''); ?>
+                      </tr>
+
+
+                      <tr>
+                          <td>A.T.C</td>
+                           <?php echo model_data('atc',''); ?>
+
+                      </tr>
+                      <tr>
+                          <td>Tool Shank (mm)</td>
+                           <?php echo model_data('tool_shankmm',''); ?>
+
+                      </tr>
+                      <tr>
+                          <td>Motor</td>
+                           <?php echo model_data('motor',''); ?>
+
+                      </tr>
+                      <tr>
+                          <td>Drive Mechanism</td>
+                         <?php echo model_data('drive_mechanism',''); ?>
+                      </tr>
+                      <tr>
+                          <td>Way System</td>
+                          <?php echo model_data('way_system',''); ?>
+
+                      </tr>
+                      <tr>
+                          <td>Total Size (W*D*H)</td>
+                          <?php echo model_data('total_size_w*d*h',''); ?>
+
+                      </tr>
+                      <tr>
+                          <td>Weight (Machine / Table)</td>
+                          <?php echo model_data('weight_machine__table',''); ?>
+
+                      </tr>
+                      <tr class="ComparisonPageModal__table__tableContainer__doubleRow">
+                          <td> 
+                          <table>
+                              <tr><td rowspan="2">Travel </td>
+                                <td>X,Y,Z axis</td>
+                                </tr><tr>
+                                <td>A / B axis</td></tr>
+                          </table> 
+                          </td>  
+						<?php
+					$args = array(
+					'post_type'  => 'arum_machine',
+					'post_status' => 'publish',
+					'order'    => 'ASC',
+					'posts_per_page' => 30
+					);
+
+					$limit=1;
+					$result = new WP_Query( $args );
+					if ( $result-> have_posts() ) : ?>
+					<?php while ( $result->have_posts() ) : $result->the_post(); ?>
+					<?php if($limit <= 5 ): 
+						$lpost_id=get_the_ID();
+						$travel__xyz_axis=get_post_meta($lpost_id,'travel__xyz_axis', true);
+						$travel_a__b_axis=get_post_meta($lpost_id,'travel_a__b_axis', true);
+
+						?>
+						<td>
+							<table><tr>
+							<td><?php echo $travel__xyz_axis; ?></td></tr><tr>
+							<td><?php echo $travel_a__b_axis; ?></td>
+							</tr></table>
+							</td>	
+						<?php endif; ?>
+					<?php $limit++; endwhile; ?>
+					<?php endif; wp_reset_postdata(); ?>
+                         
+                      </tr>
+                      <tr>
+                          <td>Disk Jig or Cartridge Type</td>
+                           <?php echo model_data('disk_jig_or_cartridge_type',''); ?>
+
+                      </tr>
+                       <tr> 
+                          <td>Number of Jig</td>
+                           <?php echo model_data('number_of_jig',''); ?>
+
+                      </tr>
+ 
+                       <tr>
+                          <td>Jig exchange</td>
+                           <?php echo model_data('jig_exchange',''); ?>
+
+                      </tr>
+
+
+                      <tr class="ComparisonPageModal__table__tableContainer__headingRow">
+                          <td colspan="6">Materials</td>
+                      </tr>
+                
+                      <tr>
+                          <td>Pre-milled Blank (Titanium)</td>
+                            <?php echo model_data('pre-milled_blank_titanium',''); ?>
+
+                      </tr>
+                      <tr>
+                          <td>Co-Cr & Ni-Cr Disk</td>
+                         <?php echo model_data('co-cr_&_ni-cr_disk',''); ?>
+                      </tr>
+
+
+
+                      <tr>
+                          <td>Titanium Disk</td>
+                           <?php echo model_data('titanium_disk',''); ?>
+                      </tr>
+
+
+                      <tr>
+                          <td>Lithium Disilicate</td>
+                           <?php echo model_data('lithium_disilicate',''); ?>
+                      </tr>
+
+
+                      <tr>
+                          <td>Nanocomposite </td>
+                          <?php echo model_data('nanocomposite',''); ?>
+                      </tr>
+
+
+                      <tr>
+                          <td>Zirconia </td>
+                           <?php echo model_data('zirconia',''); ?>
+                      </tr>
+
+                      <tr>
+                          <td>PMMA </td>
+                         <?php echo model_data('pmma',''); ?>
+                      </tr>
+
+                      <tr>
+                          <td>PEEK  </td>
+                          <?php echo model_data('peek',''); ?>
+                      </tr>
+                      <tr>
+                          <td>Wax  </td>
+                           <?php echo model_data('wax',''); ?>
+                      </tr>
+                  
+                      <tr class="ComparisonPageModal__table__tableContainer__headingRow">
+                          <td colspan="6">Applications</td>
+                      </tr>
+                
+                      <tr>
+                          <td>Implant Bar </td>
+                          <?php echo model_data('implant_bar',''); ?>
+                      </tr>
+                      <tr>
+                          <td>Screw-Retained Bridge</td>
+                          <?php echo model_data('screw-retained_bridge',''); ?>
+                      </tr>
+                      <tr>
+                          <td>Customized Abutment             </td>
+                         <?php echo model_data('customized_abutment',''); ?>
+                      </tr>
+
+
+                      <tr>
+                          <td>Hybrid Abutment </td>
+                          <?php echo model_data('hybrid_abutment',''); ?>
+                      </tr>
+
+                      <tr>
+                          <td>Inlay & Onlay </td>
+                          <?php echo model_data('inlay_&_onlay',''); ?>
+                      </tr>
+
+
+                      <tr>
+                          <td>Crown & Coping</td>
+                          <?php echo model_data('crown_&_coping',''); ?>
+                      </tr>
+
+                      <tr>
+                          <td>Crown & Coping Bridge</td>
+                           <?php echo model_data('crown_&_coping_bridge',''); ?>
+                      </tr>
+                      <tr>
+                          <td>Model</td>
+                          <?php echo model_data('model',''); ?>
+                      </tr>
+
+
+                      <tr>
+                          <td>Bite Splint </td>
+                         <?php echo model_data('bite_splint',''); ?>
+                      </tr>
+
+                      <tr>
+                          <td>Denture </td>
+                         <?php echo model_data('denture',''); ?>
+                      </tr>
+ 
+
+                  </tbody>
+              </table>
+
+
+            </div><!-- tables -->
+
+
+
+        </div><!-- col -->
+
+
+
+
+
+
+        <div class="customCol__md__6">
+            <div class="ComparisonPageModal__table__topImg ComparisonPageModal__table__topImg__second">
+                <img src="<?php echo site_url(); ?>/wp-content/uploads/2022/04/comparision__popUPSplitImages__02.png">
+            </div><!-- img -->
+    
+            <div class="ComparisonPageModal__table__bars ComparisonPageModal__table__barsSecond">
+                <div class="ComparisonPageModal__table__bars__blue"> </div>
+                <div class="ComparisonPageModal__table__bars__lightgtGray"> </div>
+                <div class="ComparisonPageModal__table__bars__darkGray"> </div>
+            </div><!-- bars -->
+            
+
+
+            <div class="ComparisonPageModal__table__tableContainer">
+              
+              <table class="ComparisonPageModal__table__tableContainer__model ComparisonPageModal__table__tableContainer__modelSecond">
+					<thead>
+					<tr>
+					<?php
+					$args = array(
+					'post_type'  => 'arum_machine',
+					'post_status' => 'publish',
+					'order'    => 'ASC',
+					'posts_per_page' => 30
+					);
+
+
+					$limit=1;
+					$result = new WP_Query( $args );
+					if ( $result-> have_posts() ) : ?>
+					<?php while ( $result->have_posts() ) : $result->the_post(); 
+					$post_id=get_the_ID();
+
+ 
+						?>
+					<?php if($limit > 5 ): ?>
+						<th class="post_id_<?php echo $post_id; ?>"><?php the_title(); ?></th>
+					<?php endif; ?>
+					<?php $limit++; endwhile; ?>
+					<?php endif; wp_reset_postdata(); ?>
+					</tr>
+					</thead>
+                  <tbody>
+                      
+                      <tr>
+					       <?php echo rmodel_data('axies',''); ?>
+
+                      </tr> 
+ 
+ 
+                      <tr> 
+                          <?php echo rmodel_data('processing',''); ?>
+
+                      </tr>
+
+                      <tr>
+                          <?php echo rmodel_data('rpm',''); ?>
+                      </tr>
+
+ 
+                      <tr>
+                         <?php echo rmodel_data('spindle_power',''); ?>
+                      </tr>
+
+
+                      <tr>
+                           <?php echo rmodel_data('atc',''); ?>
+
+                      </tr>
+                      <tr>
+                           <?php echo rmodel_data('tool_shankmm',''); ?>
+
+                      </tr>
+                      <tr>
+                           <?php echo rmodel_data('motor',''); ?>
+
+                      </tr>
+                      <tr>
+                         <?php echo rmodel_data('drive_mechanism',''); ?>
+                      </tr>
+                      <tr>
+                          <?php echo rmodel_data('way_system',''); ?>
+
+                      </tr>
+                      <tr>
+                          <?php echo rmodel_data('total_size_w*d*h',''); ?>
+
+                      </tr>
+                      <tr>
+                          <?php echo rmodel_data('weight_machine__table',''); ?>
+
+                      </tr>
+                      <tr class="ComparisonPageModal__table__tableContainer__doubleRow">
+                          
+                        <?php
+					$args = array(
+					'post_type'  => 'arum_machine',
+					'post_status' => 'publish',
+					'order'    => 'ASC',
+					'posts_per_page' => 30
+					);
+
+					$limit=1;
+					$result = new WP_Query( $args );
+					if ( $result-> have_posts() ) : ?>
+					<?php while ( $result->have_posts() ) : $result->the_post(); ?>
+					<?php if($limit > 5 ): 
+						$lpost_id=get_the_ID();
+						$travel__xyz_axis=get_post_meta($lpost_id,'travel__xyz_axis', true);
+						$travel_a__b_axis=get_post_meta($lpost_id,'travel_a__b_axis', true);
+
+						?>
+						<td>
+							<table><tr>
+							<td><?php echo $travel__xyz_axis; ?></td></tr><tr>
+							<td><?php echo $travel_a__b_axis; ?></td>
+							</tr></table>
+							</td>	
+						<?php endif; ?>
+					<?php $limit++; endwhile; ?>
+					<?php endif; wp_reset_postdata(); ?> 
+						
+                         
+                      </tr>
+                      <tr>
+                           <?php echo rmodel_data('disk_jig_or_cartridge_type',''); ?>
+
+                      </tr>
+                       <tr>
+                           <?php echo rmodel_data('number_of_jig',''); ?>
+
+                      </tr>
+
+                       <tr>
+                           <?php echo rmodel_data('jig_exchange',''); ?>
+
+                      </tr>
+
+
+                      
+                		<tr class="ComparisonPageModal__table__tableContainer__headingRow">
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                      </tr>
+                      <tr>
+                            <?php echo rmodel_data('pre-milled_blank_titanium',''); ?>
+ 
+                      </tr>
+                      <tr>
+                         <?php echo rmodel_data('co-cr_&_ni-cr_disk',''); ?>
+                      </tr>
+ 
+
+                      <tr>
+                           <?php echo rmodel_data('titanium_disk',''); ?>
+                      </tr>
+
+
+                      <tr>
+                           <?php echo rmodel_data('lithium_disilicate',''); ?>
+                      </tr>
+
+
+                      <tr>
+                          <?php echo rmodel_data('nanocomposite',''); ?>
+                      </tr>
+
+
+                      <tr>
+                           <?php echo rmodel_data('zirconia',''); ?>
+                      </tr>
+
+                      <tr>
+                         <?php echo rmodel_data('pmma',''); ?>
+                      </tr>
+
+                      <tr>
+                          <?php echo rmodel_data('peek',''); ?>
+                      </tr>
+                      <tr>
+                           <?php echo rmodel_data('wax',''); ?>
+                      </tr>
+
+                  
+                      <tr class="ComparisonPageModal__table__tableContainer__headingRow">
+                          <td colspan="6"></td>
+                      </tr>
+                
+					<tr>
+						<?php echo rmodel_data('implant_bar',''); ?>
+					</tr>
+                      <tr>
+                          <?php echo rmodel_data('screw-retained_bridge',''); ?>
+                      </tr>
+                      <tr>
+                         <?php echo rmodel_data('customized_abutment',''); ?>
+                      </tr>
+
+
+                      <tr>
+                          <?php echo rmodel_data('hybrid_abutment',''); ?>
+                      </tr>
+                      <tr>
+                          <?php echo rmodel_data('inlay_&_onlay',''); ?>
+                      </tr>
+
+
+                      <tr>
+                          <?php echo rmodel_data('crown_&_coping',''); ?>
+                      </tr>
+
+                      <tr>
+                           <?php echo rmodel_data('crown_&_coping_bridge',''); ?>
+                      </tr>
+                      <tr>
+                          <?php echo rmodel_data('model',''); ?>
+                      </tr>
+
+                      <tr>
+                         <?php echo rmodel_data('bite_splint',''); ?>
+                      </tr>
+
+                      <tr>
+                         <?php echo rmodel_data('denture',''); ?>
+                      </tr>
+ 
+ 
+                  </tbody>
+              </table>
+
+
+            </div><!-- tables -->
+
+ 
+ 
+        </div><!-- col -->
+
+
+ 
+
+   </div><!--row -->
+
+   <div class="comparisionPage___tableBottomText">* Products are subject to change without notice to improve quality, function, design or otherwise. /  ◎High Compatibility / O: Compatibility / X: Non-Compatibility</div>
+</div><!-- table -->
+</div><!-- overlay -->
+        </div>
+       
+      </div>
+      
+    </div>
+  </div>
+</div><!-- page -->
+
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+ 
+ 
+  <!-- Trigger the modal with a button -->
+
+ 
+  
+
+
+
+<script>
+$(document).ready(function(){
+ 
+
+	// For filter box hide/show
+	
+   $(".customComparisonPage__maniBanner__searchBar__filter").hover(function () {
+    $(".customComparisonPage__maniBanner__toggle").show();
+      },
+      function () {
+            $(".customComparisonPage__maniBanner__searchBar__filter").click(function(){
+
+  //	console.log('here_reched');
+
+    $(".customComparisonPage__maniBanner__toggle").toggleClass("showUpFilter");
+     $(".customComparisonPage__maniBanner__toggle").hide();
+
+    	//console.log('here_reched 2');
+  }); 
+
+
+
+      });
+     
+
+
+$( ".full_search_row" ).mouseleave(function() {
+         $(".customComparisonPage__maniBanner__toggle").hide();
+
+});  
+ 
+ 
+
+
+ $(".customComparisonPage__basicBtn").click(function(){
+    $(".ComparisonPageModal__tableOverlay").toggleClass("showUpFullCompair");
+  });
+
+  $(".mob_menu_click").click(function(){
+    $(".mob_menu_both").toggleClass('menu_both_show');
+  });
+
+ 
+ $(document).on('click', '.click_models',function(e){
+			e.preventDefault();
+		    var model_id= $(this).data('id');
+		    var model_type= $(this).data('type');
+		    var model_name= $(this).data('name');
+
+		    if(model_type ==1){
+		    $('.left_selected_name').html(model_name + '<img src="<?php echo site_url(); ?>/wp-content/uploads/2022/04/dropDown__BlackIcon.svg">');
+			} else {
+			$('.right_selected_name').html(model_name + '<img src="<?php echo site_url(); ?>/wp-content/uploads/2022/04/dropDown__BlackIcon.svg">');
+
+			} 
+
+			//$('.click_models img').addClass('here');
+
+
+		    var data= {  
+				 'model_id' : model_id,
+				 'model_type': model_type,
+				}; 
+
+		    $.ajax({
+					type: 'POST',
+					url: '<?php echo admin_url('admin-ajax.php'); ?>',
+					data: {
+					   "action": "get_models",
+				        data : data
+					},
+					beforeSend: function(){
+						//$('body').css('opacity', '0.6');
+					},
+ 
+					success: function(result){  
+					//$('body').css('opacity', '1');
+
+					if(model_type ==1){
+						$('.left_model_ajax_data').html(result)
+						$('.left_model_data').hide();
+						
+
+					} else {
+						$('.right_model_ajax_data').html(result)
+						$('.right_model_data').hide();
+ 
+					}    
+						
+				}
+			}); 
+
+		});
+   
+
+  
+}); 
+</script> 
+
+<?php
+get_footer();
+
+

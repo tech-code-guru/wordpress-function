@@ -1,0 +1,1057 @@
+<?php
+
+/**
+ * Theme settings pages
+ */
+add_action( 'acf/init', function () {
+	acf_add_options_page(array(
+		'page_title' 	=> 'Theme General Settings',
+		'menu_title'	=> 'Theme Settings',
+		'menu_slug' 	=> 'theme-general-settings',
+		'capability'	=> 'edit_posts',
+		'redirect'		=> false
+	));
+
+	acf_add_options_sub_page(array(
+		'page_title' 	=> 'Theme Header Settings',
+		'menu_title'	=> 'Header',
+		'parent_slug'	=> 'theme-general-settings',
+	));
+
+	acf_add_options_sub_page(array(
+		'page_title' 	=> 'Theme Footer Settings',
+		'menu_title'	=> 'Footer',
+		'parent_slug'	=> 'theme-general-settings',
+	));
+});
+
+
+/**
+ * Theme assets
+ */
+add_action( 'wp_enqueue_scripts', function () {
+	wp_dequeue_style( 'wp-block-library' );
+	wp_dequeue_style( 'wc-blocks-style' );
+	wp_dequeue_style( 'wc-blocks-vendors-style' );
+	wp_dequeue_style( 'storefront-gutenberg-blocks' );
+
+	wp_enqueue_style(
+		'allsops',
+		get_stylesheet_directory_uri() . '/dist/allsops.css',
+		[ 'storefront-style' ],
+		@filemtime( get_stylesheet_directory() . '/dist/allsops.css' )
+	);
+
+	wp_enqueue_style(
+		'allsops-fonts',
+		'https://fonts.googleapis.com/css2?family=Muli:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400&family=Playfair+Display:wght@400;700&family=Roboto+Condensed:wght@700&display=swap',
+		null,
+		null
+	);
+
+	wp_enqueue_script(
+		'allsops',
+		get_stylesheet_directory_uri() . '/dist/allsops.js',
+		[ 'jquery' ],
+		@filemtime( get_stylesheet_directory() . '/dist/allsops.js' ),
+		true
+	);
+	
+}, 100 );
+
+// Remove inline block styles
+remove_action( 'wp_enqueue_scripts', 'wp_enqueue_global_styles' );
+
+// Remove block editor svg filters
+remove_action( 'wp_body_open', 'wp_global_styles_render_svg_filters' );
+
+// Remove wp-block-styles support
+add_action( 'after_setup_theme', function () {
+	remove_theme_support( 'wp-block-styles' );
+}, 100 );
+
+
+/**
+ * Reinit and reorder header to suit Allsops Theme
+ */
+add_action( 'template_redirect', function () {
+	if ( is_product() ) {
+		remove_action( 'storefront_sidebar', 'storefront_get_sidebar', 10 );
+	};
+	remove_action( 'storefront_page', 'storefront_page_header', 10 );
+
+    remove_action( 'storefront_header', 'storefront_site_branding', 20 );
+	add_action( 'storefront_header', 'storefront_site_branding', 45 );
+
+	// @hooked storefront_product_search                   - 40
+    remove_action( 'storefront_header', 'storefront_product_search', 40 );
+	add_action( 'storefront_header', 'storefront_product_search', 65 );
+
+	// @hooked storefront_header_cart                      - 60
+    remove_action( 'storefront_header', 'storefront_header_cart', 60 );
+	add_action( 'storefront_header', 'storefront_header_cart', 40 );
+
+	add_action( 'storefront_header', 'allsops_top_nav', 10 );
+}, 100 );
+
+/**
+ * Filter Yoast Meta Priority
+ */
+add_filter( 'wpseo_metabox_prio', function() { return 'low'; } );
+
+/**
+ * Custom functions for Allsops-specific content
+ */
+
+add_action( 'widgets_init', function(){
+	unregister_widget('footer-widgets');
+	unregister_widget('footer-widget-2');
+	unregister_widget('footer-widget-3');
+	unregister_widget('footer-widget-4');
+});
+
+function storefront_header_container() {
+	echo '<div class="topbar-wrapper"><div class="site-header">';
+}
+
+function storefront_header_container_close() {
+	echo '</div></div>';
+}
+
+function storefront_primary_navigation_wrapper() {
+	echo '<div class="storefront-primary-navigation site-header">';
+}
+
+function storefront_primary_navigation_wrapper_close() {
+	echo '</div>';
+}
+
+function allsops_top_nav() {
+	echo '<div class="header__topsection">';
+	//Social Links
+	if( have_rows('social_media_links', 'option') ):
+	    echo '<ul class="header__social_links">';
+	    while( have_rows('social_media_links', 'option') ) : the_row();
+
+	    	$social_svg = '';
+	    	$social_platform = get_sub_field_object('social_platform');
+	    	$value = $social_platform['value'];
+	    	$label = $social_platform['choices'][ $value ];
+	    	$social_link = get_sub_field('profile_url');
+	    	$social_svg = @file_get_contents( get_theme_file_path( "assets/images/icons/$value.svg" ) );
+
+
+	        echo '<li>';
+	        echo '<a class="header__social_links_link header__social_links_link--'.$value.'" href="'.$social_link.'" target="_blank">'.$social_svg.'<span>'.$label .'</span></a>';
+	        echo '</li>';
+	    endwhile;
+	    echo '</ul>';
+	endif;
+
+	//Email Link
+	$email_link = get_field('email_link', 'option');
+	if( $email_link ):
+	    $link_url = $email_link['url'];
+	    $link_title = $email_link['title'];
+	    $link_target = $email_link['target'] ? $link['target'] : '_self'; ?>
+	    <a class="header__email-link" href="<?php echo esc_url( $link_url ); ?>" target="<?php echo esc_attr( $link_target ); ?>">
+			<?= @file_get_contents( get_theme_file_path( "assets/images/icons/mail.svg" ) ) ?>
+	    	<span><?php echo esc_html( $link_title ); ?></span></a><?php
+	endif;
+
+	//Telephone Number
+	$telephone_link = get_field('telephone_number', 'option');
+	if( $telephone_link ):
+	    $link_url = $telephone_link['url'];
+	    $link_title = $telephone_link['title'];
+	    $link_target = $telephone_link['target'] ? $link['target'] : '_self'; ?>
+	    <a class="header__telephone-link" href="<?php echo esc_url( $link_url ); ?>" target="<?php echo esc_attr( $link_target ); ?>">
+			<?= @file_get_contents( get_theme_file_path( "assets/images/icons/phone.svg" ) ) ?>
+	    	<span><?php echo esc_html( $link_title ); ?></span>
+	    </a><?php
+	endif;
+	
+
+	echo '</div>';
+}
+
+
+/**
+ * Add product search to handheld menu
+ */
+add_filter( 'wp_nav_menu_items', 'handheld_search_menu', 10, 2 );
+function handheld_search_menu( $items, $args ) {
+	if ($args->theme_location !== 'handheld') {
+		return $items;
+	}
+
+	$form = get_product_search_form(false);
+
+	$items .= <<<HTML
+<li class="mobile-search widget_product_search">
+	$form
+</li>
+HTML;
+
+	return $items;
+}
+
+
+/**
+ * Restrict next/previous pages to those with same parent.
+ */ 
+add_filter( 'get_next_post_where', 'allsops_adjacent_page', 10, 5 );
+add_filter( 'get_previous_post_where', 'allsops_adjacent_page', 10, 5 );
+function allsops_adjacent_page( $where, $in_same_term, $excluded_terms, $taxonomy, $post ) {
+	if ( is_post_type_hierarchical( $post->post_type ) ) {
+		$is_previous = strpos( $where, 'p.post_date <' ) !== false;
+
+		$sibling_ids = get_posts([
+			'fields' => 'ids',
+			'post_type' => $post->post_type,
+			'post_parent' => $post->post_parent,
+			'posts_per_page' => -1,
+			'orderby' => 'menu_order title',
+			'order' => 'ASC',
+		]);
+
+		$target_id = 0;
+
+		foreach ( $sibling_ids as $index => $sibling_id ) {
+			if ( $sibling_id === $post->ID ) {
+				$target_id = $sibling_ids[ $is_previous ? $index - 1 : $index + 1 ] ?? 0;
+				break;
+			}
+		}
+
+		$where = "WHERE ID = $target_id";
+	}
+
+	return $where;
+}
+
+
+/**
+ * Blog Archive Title
+ */
+add_filter( 'get_the_archive_title_prefix', '__return_empty_string' );
+add_filter( 'get_the_archive_title', function ( $title ) {
+	if ( $title === __( 'Archives' ) ) {
+		$title = get_field( 'banner_title', get_option( 'page_for_posts' ) );
+	}
+
+	return $title;
+});
+
+
+/**
+ * Blog Archive Description
+ */
+add_filter( 'get_the_archive_description', function ( $description ) {
+	if ( is_home() ) {
+		$description = get_field( 'banner_text', get_option( 'page_for_posts' ) );
+	}
+
+	return $description;
+});
+
+
+/**
+ * Change number of upsells output
+ */
+add_filter( 'woocommerce_upsell_display_args', 'wc_change_number_related_products', 20 );
+function wc_change_number_related_products( $args ) {
+	$args['posts_per_page'] = 4;
+	$args['columns'] = 4; //change number of upsells here
+	return $args;
+}
+
+/**
+ * Change number of related products
+ */
+add_filter( 'woocommerce_output_related_products_args', 'jk_related_products_args', 20 );
+function jk_related_products_args( $args ) {
+	$args['posts_per_page'] = 4;
+	$args['columns'] = 4; // arranged in 4 columns
+	return $args;
+}
+
+
+/**
+ * Remove related products when upsells are defined
+ */
+remove_action( 'woocommerce_after_single_product_summary', 'woocommerce_output_related_products', 20 );
+add_action( 'woocommerce_after_single_product_summary', 'related_upsell_products', 15 );
+function related_upsell_products() {
+	global $product;
+
+	if ( isset( $product ) && is_product() ) {
+		$upsells = version_compare( WC_VERSION, '3.0', '<' ) ? $product->get_upsells() : $product->get_upsell_ids();
+
+		if ( count( $upsells ) === 0 ) {
+			woocommerce_output_related_products();
+		}
+	}
+}
+
+add_shortcode( 'product_sku_div', 'wc_product_sku_div' );
+function wc_product_sku_div() {
+
+    global $product;
+
+    if( ! is_a('WC_Product', $product) ) {
+        $product = wc_get_product( get_the_id() );
+    }
+
+    ## 1 - For variable products (and their variations)
+    if( $product->is_type('variable') ) {
+        ob_start(); // Starting buffering
+
+        ?>
+        <div class="widget" sp-sku=""></div>
+        <script>
+        jQuery( function($){
+            $('form.variations_form').on('show_variation', function( event, data ){
+                //$( '.sku' ).attr( 'sp-sku', data.sku ).text(data.sku);
+                // For testing
+                console.log( 'Variation Id: ' + data.variation_id + ' | Sku: ' + data.sku );
+				
+				$('#product_variation_id').attr('value',data.variation_id);
+				 
+
+            });
+
+            $('form.variations_form').on('hide_variation', function(){
+                //$( '.sku' ).attr( 'sp-sku', '' ).text('');
+            });
+        }); 
+
+        </script><?php
+
+        return ob_get_clean(); // return the buffered content
+    }
+    ## 2 - For other products types
+    else {
+        //return sprintf( '<span class="sku label label-default" sp-sku="%s"></span>', $product->get_sku() );
+    }
+}
+
+function show_frill_image($frill_id, $colour_id) {
+	// Check rows exist for this attribute.
+
+    // Get the frill material term for this product
+    global $product;
+
+    $productid = $product->get_id();
+    $terms = get_the_terms( $productid, 'pa_material' );
+    //print_r($terms); 
+    $term = is_array( $terms ) ? current( $terms ) : null;
+
+
+    if ( ! $term ) {
+    	return;
+    }
+
+    $material_id = $term->term_id;
+    $material_name = $term->name;
+
+    //echo 'Material: '.$material_id;
+
+    if( have_rows('add_frill_images', 'pa_material_'.$material_id) ):
+
+        // Loop through rows.
+		$row=1;
+        while( have_rows('add_frill_images', 'pa_material_'.$material_id )) : the_row();
+
+            // Get the selected attribute
+
+            // Check that this matches the current repeater row's "frill_size" taxonomy ID
+
+           $selected_frill = get_term_by('slug',$frill_id,'pa_frill-size')->term_id;
+
+
+            if (get_sub_field('frill_size') == $selected_frill):
+
+                // Load sub field value.
+                $image = get_sub_field('add_image');
+				//echo "COLOUR: " . get_term_by('slug','ivory','pa_colour')->term_id;;
+                $colour_id = "ivory";
+
+				//$test12=get_term_by('slug','ivory','pa_colour')->term_id;
+
+ 
+                if( $image ):
+
+                    // Image variables.
+                    $alt = $image['alt'];
+
+                    // Thumbnail size attributes.
+                    $size = 'thumbnail';
+                    $thumb = $image['sizes'][ $size ];
+
+                    //print_r($thumb);
+					if($thumb):
+						if($row ==2):
+                    ?>
+                    <div class="frill_image <?php echo $row; ?>">
+                        <img src="<?php echo ($thumb); ?>" alt="<?php echo esc_attr($alt); ?>" data-product="<?= $productid; ?>" />
+                    </div>  
+					<?php 
+					endif;
+				endif;
+                endif;
+            endif;
+        // End loop. 
+		$row++;
+        endwhile;
+
+    // No value.
+    else :
+        // Do something...
+    endif;
+}
+
+add_action( 'woocommerce_before_single_variation', 'action_wc_before_single_variation' );
+function action_wc_before_single_variation() {
+        show_frill_image(9, 648);
+		
+		?>
+    <script>
+    (function($){
+        $('form.variations_form').on('show_variation', function(event, data){
+        	//alert ($('select#pa_frill-size').val());
+ 
+
+			jQuery.ajax({
+			    type: "POST",
+			    url: "/wp/wp-admin/admin-ajax.php",
+			    data: {
+			        action: 'mark_message_as_read',
+			        // add your parameters here
+			        product_id: $('.frill_image img').attr('data-product'),
+			        frill_id: $('select#pa_frill-size').val(),
+			        colour_id: $('select#pa_colour').val()
+			    },
+			    success: function (output) {
+			       console.log("RETURN: "+output+'.  ');
+
+				   if(output) {
+			        $('.frill_image img').attr('src',output);
+			       // alert ($('select#pa_frill-size').val());
+				   }
+			    }
+			});
+ 
+        });
+    })(jQuery);
+    </script><?php
+
+
+
+}
+
+// register the ajax action for authenticated users
+add_action('wp_ajax_mark_message_as_read', 'mark_message_as_read');
+
+// register the ajax action for unauthenticated users
+add_action('wp_ajax_nopriv_mark_message_as_read', 'mark_message_as_read');
+
+// handle the ajax request
+function mark_message_as_read() {
+    $frill_id = $_REQUEST['frill_id'];
+    $colour_id = $_REQUEST['colour_id'];
+
+    // Get the frill material term for this product
+    $productid = $_REQUEST['product_id'];
+    $terms = get_the_terms( $productid, 'pa_material' );
+    foreach ($terms  as $term  ) {
+        $material_id = $term->term_id;
+        $material_name = $term->name;
+        break;
+    }
+
+    //echo 'Colour: '.$colour_id;
+
+    if( have_rows('add_frill_images', 'pa_material_'.$material_id) ):
+
+        while( have_rows('add_frill_images', 'pa_material_'.$material_id )) : the_row();
+
+           $selected_frill = get_term_by('slug',$frill_id,'pa_frill-size')->term_id;
+           $selected_colour = get_term_by('slug',$colour_id,'pa_colour')->term_id;
+
+            if (get_sub_field('frill_size') == $selected_frill):
+            	if (get_sub_field('colour') == $selected_colour):
+            	//echo " COLOUR:" .$selected_colour;
+
+	                // Load sub field value.
+	                $image = get_sub_field('add_image');
+	                if( $image ):
+
+	                    // Image variables.
+	                    $alt = $image['alt'];
+
+	                    // Thumbnail size attributes.
+	                    $size = 'thumbnail';
+	                    $thumb = $image['sizes'][ $size ];
+
+	                    echo esc_url($thumb);
+	                endif;
+	            endif;
+            endif;
+        // End loop.
+        endwhile;
+
+    endif;
+
+    wp_die();
+    // in the end, returns success json data
+    wp_send_json_success([/* some data here */]);
+
+    // or, on error, return error json data
+    wp_send_json_error([/* some data here */]);
+}
+
+
+if ( ! function_exists( 'storefront_product_categories' ) ) {
+	/**
+	 * Display Product Categories
+	 * Hooked into the `homepage` action in the homepage template
+	 *
+	 * @since  1.0.0
+	 * @param array $args the product section args.
+	 * @return void
+	 */
+	function storefront_product_categories( $args ) {
+		$args = apply_filters(
+			'storefront_product_categories_args', array(
+				'limit'            => 4,
+				'columns'          => 2,
+				'child_categories' => 0,
+				'orderby'          => 'menu_order',
+				'title'            => __( 'Shop by Category', 'storefront' ),
+			)
+		);
+
+		$shortcode_content = storefront_do_shortcode(
+			'product_categories', apply_filters(
+				'storefront_product_categories_shortcode_args', array(
+					'number'  => intval( $args['limit'] ),
+					'columns' => intval( $args['columns'] ),
+					'orderby' => esc_attr( $args['orderby'] ),
+					'parent'  => esc_attr( $args['child_categories'] ),
+				)
+			)
+		);
+
+		/**
+		 * Only display the section if the shortcode returns product categories
+		 */
+		if ( false !== strpos( $shortcode_content, 'product-category' ) ) {
+			echo '<section class="storefront-product-section storefront-product-categories" aria-label="' . esc_attr__( 'Product Categories', 'storefront' ) . '">';
+
+			do_action( 'storefront_homepage_before_product_categories' );
+
+			echo '<h2 class="section-title">' . wp_kses_post( $args['title'] ) . '</h2>';
+
+			do_action( 'storefront_homepage_after_product_categories_title' );
+
+			echo $shortcode_content; // WPCS: XSS ok.
+
+			do_action( 'storefront_homepage_after_product_categories' );
+
+			echo '</section>';
+		}
+	}
+}
+
+
+/**
+ * Wrap [products] shortcode content in .products-embed
+ */
+add_action( 'woocommerce_shortcode_before_products_loop', function () {
+	$shop_url = esc_url( wc_get_page_permalink( 'shop' ) );
+
+	echo '<div class="products-embed">';
+});
+
+/**
+ * ...and add "View all" link & close .products-embed wrap.
+ */
+add_action( 'woocommerce_shortcode_after_products_loop', function () {
+	echo '<a href="' . esc_url( wc_get_page_permalink( 'shop' ) ) . '" class="products-embed__link">View All</a>
+</div>';
+});
+
+
+/**
+ * Wrap product loop item link around image & title only.
+ */
+remove_action( 'woocommerce_after_shop_loop_item', 'woocommerce_template_loop_product_link_close', 5 );
+add_action( 'woocommerce_shop_loop_item_title', 'woocommerce_template_loop_product_link_close', 15 );
+
+
+/**
+ * Late force-remove "Add to cart" button on product listings.
+ *
+ * Overrides settings in wholesale & catalog plugins.
+ */
+add_action( 'woocommerce_after_shop_loop_item_title', function () {
+	remove_action( 'woocommerce_after_shop_loop_item', 'woocommerce_template_loop_add_to_cart', 10 );
+});
+
+
+/**
+ * Ensure product category images have valid width & height attributes.
+ *
+ * @see woocommerce_subcategory_thumbnail()
+ */
+remove_action( 'woocommerce_before_subcategory_title', 'woocommerce_subcategory_thumbnail', 10 );
+add_action( 'woocommerce_before_subcategory_title', 'allsops_subcategory_thumbnail', 10 );
+function allsops_subcategory_thumbnail( $category ) {
+	ob_start();
+
+	woocommerce_subcategory_thumbnail( $category );
+
+	$image = ob_get_clean();
+
+	if ( preg_match_all( '/(width|height)=""/', $image, $matches, PREG_SET_ORDER ) ) {
+		$size_name = apply_filters( 'subcategory_archive_thumbnail_size', 'woocommerce_thumbnail' );
+
+		$image_size = image_downsize( $size_name );
+
+		$width = $image_size[1] ?? 1;
+
+		$height = $image_size[2] ?? 1;
+
+		$size = wc_get_image_size( $size_name );
+
+		if ( empty( $size['width'] ) ) {
+			$size['width'] = $width;
+		}
+
+		if ( empty( $size['height'] ) ) {
+			$size['height'] = $size['width'] * ( $height / $width );
+		}
+
+		foreach ( $matches as $match ) {
+			$image = str_replace( $match[0], "$match[1]=\"{$size[$match[1]]}\"", $image );
+		}
+	}
+
+	echo $image;
+}
+
+
+/**
+ * Fix invalid HTML nesting for YITH Catalog Mode Premium plugin.
+ */
+add_filter( 'ywctm_hide_price_anyway', function ( $price_html ) {
+	return strtr( $price_html, [
+		'<div ' => '<span ',
+		'<div>' => '<span>',
+		'</div>' => '</span>',
+	]);
+});
+
+
+/**
+ * Filter Everything Pro + YITH Color Label Variations
+ */
+add_filter( 'wpc_view_include_filename', function ( $view, $filter, $set ) {
+	if ( $view === 'labels' && $filter['entity'] === 'taxonomy' ) {
+		$taxonomy = $filter['e_name'];
+
+		if ( strpos( $taxonomy, 'pa_' ) === 0 ) {
+			$attribute_taxonomies = wc_get_attribute_taxonomies();
+
+			foreach ( $attribute_taxonomies as $attribute_tax ) {
+				if ( $taxonomy === "pa_$attribute_tax->attribute_name" ) {
+					if ( $attribute_tax->attribute_type === 'colorpicker' ) {
+						$view = 'yith-color-labels';
+					}
+
+					break;
+				}
+			}
+		}
+	}
+
+	return $view;
+}, 10, 3 );
+
+/**
+ * IMPORTANT
+ *
+ * Force WooCommerce Wholesale Prices Premium to run its filters *after* Filter Everything Pro.
+ */
+add_action( 'init', function () {
+	global $wc_wholesale_prices_premium;
+
+	$wwpp_query = $wc_wholesale_prices_premium->wwpp_query ?? null;
+
+	if ( ! $wwpp_query || ! method_exists( $wwpp_query, 'pre_get_posts' ) ) {
+		return;
+	}
+
+	remove_action( 'woocommerce_product_query', [ $wwpp_query, 'pre_get_posts' ], 10, 1 );
+
+	add_action( 'woocommerce_product_query', function () use ( $wwpp_query ) {
+		$pre_get_posts = function ( $wp_query ) use ( &$pre_get_posts, $wwpp_query ) {
+			$wwpp_query->pre_get_posts( $wp_query );
+
+			remove_action( 'pre_get_posts', $pre_get_posts, 10000 );
+		};
+
+		add_action( 'pre_get_posts', $pre_get_posts, 10000 );
+	});
+});
+
+
+/**
+ * Hide all parent theme templates.
+ */
+add_filter( 'theme_page_templates', function ( $page_templates ) {
+	return array_filter(
+		$page_templates,
+		function ( $page_template ) {
+			return is_file( get_stylesheet_directory() . "/$page_template" );
+		},
+		ARRAY_FILTER_USE_KEY
+	);
+});
+
+/**
+ ******************************************************************************
+ * Navigation Menus (Mega Menu)
+ *****************************************************************************/
+
+add_filter( 'nav_menu_submenu_css_class', function ( $classes, $args ) {
+	if ( ! empty( $args->mega_menu_item ) ) {
+		$classes[] = 'mega-menu';
+
+		if ( get_field( 'featured_items', $args->mega_menu_item ) ) {
+			$classes[] = ' has-featured-items';
+		}
+	}
+
+	return $classes;
+}, 10, 2 );
+
+add_filter( 'nav_menu_css_class', function ( $classes, $menu_item ) {
+	if ( get_field( 'mega_menu', $menu_item ) ) {
+		$classes[] = 'mega-menu-item';
+	}
+
+	return $classes;
+}, 10, 2 );
+
+add_filter( 'wp_nav_menu_args', function ( $args ) {
+	if ( $args['theme_location'] !== 'primary' || ! empty( $args['walker'] ) ) {
+		return $args;
+	}
+
+	if ( ! class_exists( 'allsops_mega_menu_walker' ) ) {
+		class allsops_mega_mena_walker extends Walker_Nav_Menu {
+			public function add_featured_item( &$output, $link ) {
+				$output .= '<li class="featured-menu-item">';
+
+				ob_start();
+
+				get_template_part( 'partials/link', null, [
+					'link' => $link['link'],
+					'link_html' => wp_get_attachment_image( $link['image']['ID'], 'medium' ) . '<span>{title}</span>',
+					'class' => 'featured-menu-item-link',
+				]);
+
+				$output .= ob_get_clean();
+
+				$output .= '</li>';
+			}
+
+			public function start_el( &$output, $data_object, $depth = 0, $args = null, $current_object_id = 0 ) {
+				if ( is_object( $args ) ) {
+					$args->mega_menu_item = get_field( 'mega_menu', $data_object ) ? $data_object : false;
+				}
+
+				if ( ! empty( $args->mega_menu_item ) && ! isset( $this->mega_menu_open ) ) {
+					$this->mega_menu_open = $depth;
+					$this->mega_menu_item = $data_object;
+				}
+
+				parent::start_el( $output, $data_object, $depth, $args, $current_object_id );
+			}
+
+			public function end_lvl( &$output, $depth = 0, $args = null ) {
+				if ( isset( $this->mega_menu_open ) && $this->mega_menu_open === $depth ) {
+					$this->mega_menu_open = null;
+
+					$featured_items = get_field( 'featured_items', $this->mega_menu_item ) ?: [];
+
+					foreach ( $featured_items as $link ) {
+						$this->add_featured_item( $output, $link );
+					}
+				}
+
+				parent::end_lvl( $output, $depth, $args );
+			}
+		}
+	}
+
+	$args['walker'] = new allsops_mega_mena_walker;
+
+	return $args;
+});
+
+function product_package_type($product_id) {
+
+
+	$package_type=get_field('package_type', $product_id);
+
+	if($package_type):
+
+		echo '<strong>Package Type:</strong> &nbsp;'.$package_type;
+
+	endif;
+
+}
+
+add_action('woocommerce_price_filter_results','product_package_type');
+
+
+add_filter( 'woocommerce_get_price_html',  function ($price){
+
+	$package_type=get_field('package_type', $product_id);
+
+	if($package_type){ 
+			//$all=$price .'/'.$package_type;
+			$all=$price .' '.ucfirst($package_type);
+	} else { 
+		$all=$price;
+	}  
+	return $all;
+		  
+} ); 
+
+
+
+// First, let's write the function that returns a given product SKU
+/*
+function bbloomer_return_sku( $product ) {
+   $sku = $product->get_sku();
+   if ( ! empty( $sku ) ) {
+      return '<p>SKU: ' . $sku . '</p>';
+   } else {
+      return '';
+   }
+} 
+ 
+// This adds the SKU under cart/checkout item name
+add_filter( 'woocommerce_cart_item_name', 'bbloomer_sku_cart_checkout_pages', 9999, 3 );
+ 
+function bbloomer_sku_cart_checkout_pages( $item_name, $cart_item, $cart_item_key  ) {
+   $product = $cart_item['data'];
+   $item_name .= bbloomer_return_sku( $product );
+   return $item_name;
+}
+ 
+// This adds SKU under order item table name
+add_action( 'woocommerce_order_item_meta_start', 'bbloomer_sku_thankyou_order_email_pages', 9999, 4 );
+ 
+function bbloomer_sku_thankyou_order_email_pages( $item_id, $item, $order, $plain_text ) {
+   $product = $item->get_product(); 
+   echo bbloomer_return_sku( $product );
+}
+*/
+/*
+function get_product_by_sku( $sku ) {
+  global $wpdb;
+
+  $product_id = $wpdb->get_var( $wpdb->prepare( "SELECT post_id FROM $wpdb->postmeta WHERE meta_key='_sku' AND meta_value='%s' LIMIT 1", $sku ) );
+
+  //if ( $product_id ) return new WC_Product( $product_id );
+
+  //return null;
+}
+*/
+
+// custom product field in cart and checkout
+
+
+
+add_filter( 'woocommerce_get_item_data2', 'custom_field_data', 10, 2 );
+function custom_field_data( $cart_data, $cart_item ) 
+{
+    $custom_items = array();
+
+    if( !empty( $cart_data ) )
+        $custom_items = $cart_data;
+
+    // Get the product ID
+    $product_id = $cart_item['product_id'];
+	$allsops_sku=get_field('allsops_sku',$product_id);
+
+    if($allsops_sku)
+
+        $custom_items[] = array(
+            'name'      => __( 'Allsops Sku', 'woocommerce' ),
+            'value'     => $allsops_sku,
+            'display'   => $allsops_sku,
+        );
+
+
+   return $custom_items;
+}  
+ 
+
+add_action( 'woocommerce_before_add_to_cart_button', 'add_custom_fields_single_product', 20 );
+function add_custom_fields_single_product(){
+    global $product;
+	$product_id=get_the_ID();
+	$allsops_sku=get_field('allsops_sku',$product_id);
+
+
+	if ($product->is_type( 'variable' )) {
+		$product = wc_get_product($product_id);
+		$variations = $product->get_available_variations();
+		$variations_id = wp_list_pluck( $variations, 'variation_id' );
+		//echo 'here';
+
+		echo sprintf('<input type="hidden" placeholder="p" name="allsops_sku" value="%s">', $allsops_sku);
+			
+		//echo '<pre>';
+		//print_r($variations); 
+
+	
+
+
+	} 
+
+
+
+
+    ?>
+	
+    <input type="hidden" placeholder="<?php _e('Allsops SKU', 'woocommerce'); ?>" name="allsops_sku" value="<?php echo $allsops_sku; ?>">
+	
+
+    <?php
+}
+
+ 
+add_filter( 'woocommerce_add_cart_item_data', 'add_custom_fields_cart_item_data', 10, 2 );
+function add_custom_fields_cart_item_data( $cart_item_data, $product_id ){
+    if(isset($_POST['allsops_sku']))
+        $cart_item_data['custom_data']['allsops_sku'] = sanitize_text_field($_POST['allsops_sku']);
+
+
+    $cart_item_data['custom_data']['unique_key'] = md5( microtime().rand() );
+    WC()->session->set( 'custom_data', $cart_item_data['custom_data'] );
+
+    return $cart_item_data;
+} 
+
+add_filter( 'woocommerce_get_item_data', 'display_custom_fields_cart_item_data', 10, 2 );
+function display_custom_fields_cart_item_data($item_data, $cart_item){ 
+
+    if( ! array_key_exists( 'custom_data', $cart_item ) )
+        return $item_data;
+
+    if( array_key_exists( 'allsops_sku', $cart_item['custom_data'] ) )
+        $item_data[] = array(
+            'key'   => __('Allsops SKU', 'woocommerce'),
+            'value' => $cart_item['custom_data']['allsops_sku']
+        );
+
+
+    return $item_data;
+}
+
+// Save values as Order item data and display them everywhere
+add_action('woocommerce_checkout_create_order_line_item', 'save_custom_fields_as_order_item_meta', 20, 4);
+function save_custom_fields_as_order_item_meta($item, $cart_item_key, $values, $order) {
+    if( ! isset($values['custom_data']) )
+        return;
+
+    $text_domain ='woocommerce';
+
+    // Save values:
+    if( array_key_exists('allsops_sku', $values['custom_data']) ){
+        $item->update_meta_data( __('Allsops SKU', $text_domain), $values['custom_data']['allsops_sku'] );
+    }
+ 
+}
+ 
+function my_enqueue($hook) {
+	
+    wp_enqueue_script('my_custom_script',get_stylesheet_directory_uri() . '/assets/scripts/custom_admin.js');
+}
+
+add_action('admin_enqueue_scripts', 'my_enqueue');
+
+
+
+  
+
+// Add Variation Settings
+add_action( 'woocommerce_product_after_variable_attributes', 'variation_settings_fields', 10, 3 );
+
+
+function variation_settings_fields( $loop, $variation_data, $variation ) {
+
+	  
+	woocommerce_wp_text_input( 
+		array( 
+			'id'          => 'allsops_var_sku[' . $variation->ID . ']', 
+			'label'       => __( 'Custom SKU', 'woocommerce' ), 
+			'description' => __( '', 'woocommerce' ),
+			'value'       => get_post_meta( $variation->ID, 'allsops_var_sku', true )
+		)
+	); 
+	
+} 
+
+	// Save Variation Settings
+add_action( 'woocommerce_save_product_variation', 'save_variation_settings_fields', 10, 2 );
+
+
+	function save_variation_settings_fields( $post_id ) {
+	
+	
+		$allsops_var_sku = $_POST['allsops_var_sku'][ $post_id ];
+		if( ! empty( $allsops_var_sku ) ) {
+			update_post_meta( $post_id, 'allsops_var_sku', esc_attr( $allsops_var_sku ) );
+		} 
+	
+	}
+
+ 
+//For sku remove
+/*
+add_filter( 'wc_product_sku_enabled', 'bbloomer_remove_product_page_sku' );
+  
+function bbloomer_remove_product_page_sku( $enabled ) {
+    if ( is_cart() ) {
+        return false;
+    }
+    return $enabled;
+} 
+
+add_filter( 'wc_product_sku_enabled', '__return_false' );
+
+function njengah_remove_product_page_skus( $enabled ) {
+
+	if ( ! is_admin() && is_product() ) {
+	
+	return false;
+	
+	}
+	
+	return $enabled;
+	
+	}
+	
+	add_filter( 'wc_product_sku_enabled', 'njengah_remove_product_page_skus' );
+	
+
+
+	

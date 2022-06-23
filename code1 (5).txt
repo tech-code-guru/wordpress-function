@@ -1,0 +1,2043 @@
+<?php
+/******************************Child Theme funcitons******************************/
+
+	add_action( 'wp_enqueue_scripts', 'my_theme_enqueue_styles' );
+	function my_theme_enqueue_styles() {
+	    wp_enqueue_style( 'divi-style', get_template_directory_uri() . '/style.css' );
+	 
+	}
+ 
+
+	add_filter( 'use_block_editor_for_post', '__return_false' );
+	 
+	add_action('wp_enqueue_scripts','custom_scripts');
+	function custom_scripts(){
+    	if ( class_exists( 'WooCommerce' ) ) {
+			 $args = array( 
+		            'status' => 'publish'
+			      ) ; 
+	        $products = wc_get_products($args);
+	        $all_prices[] = array();
+	        foreach ($products as $product) {
+	            $all_prices[] = $product->get_price();
+	        }
+	        $price = array_filter($all_prices);
+	        if($price):
+	        $min_price = min($price);
+	        $max_price = max($price);
+	    	endif; 
+		  }else{ 
+		    	$min_price = 0; 
+		        $max_price = 0; 
+		    }  
+
+    	wp_enqueue_style('front-css', get_stylesheet_directory_uri(). '/assets/css/custom-style.css' );      
+    	wp_enqueue_style('jquery_ui-css', 'https://code.jquery.com/ui/1.13.0/themes/base/jquery-ui.css"' );      
+    	wp_enqueue_style('rangeSlider-css', get_stylesheet_directory_uri(). '/assets/css/rangeSlider.css' );  
+		wp_enqueue_style('poppin-font', 'https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700;800;900&display=swap'  );  
+		wp_enqueue_style('lato-font', 'https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,400;1,700;1,900&display=swap'  );  
+		wp_enqueue_style('niconne-font', 'https://fonts.googleapis.com/css2?family=Niconne&display=swap'  );  
+		wp_enqueue_style('pt-serif-font', 'https://fonts.googleapis.com/css2?family=PT+Serif:wght@400;700&display=swap'  );  
+		wp_enqueue_style('home-css', get_stylesheet_directory_uri(). '/assets/css/home/all.css'  );  
+		wp_enqueue_style('home-bootstrap', get_stylesheet_directory_uri(). '/assets/css/home/bootstrap.min.css'  );  
+		wp_enqueue_style('home-owl', 'https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.1.3/assets/owl.carousel.min.css'  );  
+		wp_enqueue_style('home-custom', get_stylesheet_directory_uri(). '/assets/css/home/custom.css'  );  
+
+		wp_enqueue_style('select2-css', get_stylesheet_directory_uri(). '/assets/css/select2.min.css');  
+
+
+    	wp_enqueue_script('rangeSlider-js', 'https://code.jquery.com/ui/1.13.0/jquery-ui.js');	
+    	wp_enqueue_script('popper-js', get_stylesheet_directory_uri() . '/assets/js/popper.js'); 
+    	wp_enqueue_script('bootstrap-js', get_stylesheet_directory_uri() . '/assets/js/bootstrap.min.js'); 
+    	wp_enqueue_script('OwlCarousel2', 'https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.1.3/owl.carousel.min.js');  
+    	wp_enqueue_script('front-js', get_stylesheet_directory_uri() . '/assets/js/custom-js.js?nocache='.rand(), array('jquery')); 
+
+    	wp_enqueue_script('select2-js', get_stylesheet_directory_uri() . '/assets/js/select2.min.js');  
+
+        wp_localize_script( 'front-js', 'diamond_ajax_url',
+         array( 
+         	'ajax_url' => admin_url( 'admin-ajax.php' ),
+         	'site_url' => site_url(),
+         	'nonce' => wp_create_nonce('_diamond'),
+         	'wc_min_price' =>$min_price,
+         	'wc_max_price' =>$max_price,
+
+         ) );
+    }
+
+
+    add_action( 'init', 'woocommerce_custom_product_taxonomy_item', 9 );
+	function woocommerce_custom_product_taxonomy_item()  {
+		$labels = array(
+		    'name'                       => 'Ring Styles',
+		    'singular_name'              => 'Ring Style',
+		    'menu_name'                  => 'Ring Styles',
+		    'all_items'                  => 'All Styles',
+		    'parent_item'                => 'Parent Style',
+		    'parent_item_colon'          => 'Parent Style:',
+		    'new_item_name'              => 'New Style Name',
+		    'add_new_item'               => 'Add New Style',
+		    'edit_item'                  => 'Edit Style',
+		    'update_item'                => 'Update Style',
+		    'separate_items_with_commas' => 'Separate Style with commas',
+		    'search_items'               => 'Search Style',
+		    'add_or_remove_items'        => 'Add or remove Style',
+		    'choose_from_most_used'      => 'Choose from the most used Style',
+		);
+		$args = array(
+		    'labels'                     => $labels,
+		    'hierarchical'               => true,
+		    'public'                     => true,
+		    'show_ui'                    => true,
+		    'show_admin_column'          => true,
+		    'show_in_nav_menus'          => true,
+		    'show_tagcloud'              => true,
+		    'media'  				=> true
+		);
+		register_taxonomy( 'ring-style', 'product', $args );
+	}
+	
+	add_action( 'init', 'woocommerce_custom_product_taxonomy_diamond', 9 );
+	function woocommerce_custom_product_taxonomy_diamond()  {
+		$labels = array(
+		    'name'                       => 'Diamonds',
+		    'singular_name'              => 'Diamonds',
+		    'menu_name'                  => 'Diamonds',
+		    'all_items'                  => 'All Diamonds',
+		    'parent_item'                => 'Parent Diamond',
+		    'parent_item_colon'          => 'Parent Diamond:',
+		    'new_item_name'              => 'New Diamond Name',
+		    'add_new_item'               => 'Add New Diamond',
+		    'edit_item'                  => 'Edit Diamond',
+		    'update_item'                => 'Update Diamond',
+		    'separate_items_with_commas' => 'Separate Diamond with commas',
+		    'search_items'               => 'Search Diamond',
+		    'add_or_remove_items'        => 'Add or remove Diamond',
+		    'choose_from_most_used'      => 'Choose from the most used Diamond',
+		);
+		
+		$args = array(
+		    'labels'                     => $labels,
+		    'hierarchical'               => true,
+		    'public'                     => true,
+		    'show_ui'                    => true,
+		    'show_admin_column'          => true,
+		    'show_in_nav_menus'          => true,
+		    'show_tagcloud'              => true,
+		);
+		register_taxonomy( 'diamonds', 'product', $args );
+	}
+	
+
+	add_action( 'init', 'woocommerce_custom_product_taxonomy_metal', 9 );
+	function woocommerce_custom_product_taxonomy_metal()  {
+		$labels = array(
+		    'name'                       => 'Metals',
+		    'singular_name'              => 'Metals',
+		    'menu_name'                  => 'Metals',
+		    'all_items'                  => 'All Metals',
+		    'parent_item'                => 'Parent Metal',
+		    'parent_item_colon'          => 'Parent Metal:',
+		    'new_item_name'              => 'New Metal Name',
+		    'add_new_item'               => 'Add New Metal',
+		    'edit_item'                  => 'Edit Metal',
+		    'update_item'                => 'Update Metal',
+		    'separate_items_with_commas' => 'Separate Metal with commas',
+		    'search_items'               => 'Search Metal',
+		    'add_or_remove_items'        => 'Add or remove Metal',
+		    'choose_from_most_used'      => 'Choose from the most used Metal',
+		);
+		$args = array(
+		    'labels'                     => $labels,
+		    'hierarchical'               => true,
+		    'public'                     => true,
+		    'show_ui'                    => true,
+		    'show_admin_column'          => true,
+		    'show_in_nav_menus'          => true,
+		    'show_tagcloud'              => true,
+		);
+		register_taxonomy( 'metals', 'product', $args );
+	}
+
+
+	add_action('woocommerce_product_options_general_product_data', 'woocommerce_product_custom_fields');
+	function woocommerce_product_custom_fields(){ 
+	    global $woocommerce, $post;
+	    echo '<div class="product_custom_field">';
+
+	     woocommerce_wp_text_input( 
+	        array(
+	           	'id' => 'product_stock_number',
+	            'placeholder' => 'Stock Number',
+	            'label' => __('Stock Number', 'woocommerce'),
+	            'type' => 'text'
+	        )
+	    ); 
+
+	 	 woocommerce_wp_text_input( 
+	        array(
+	           'id' => 'product_carat',
+	            'placeholder' => 'Carat',
+	            'label' => __('Carat', 'woocommerce'),
+	            'type' => 'number',
+	            'custom_attributes' => array(
+	                'step' => 'any',
+	                'min' => '0.15',
+	                'max' => '12'
+	            )
+	        )
+	    );
+		woocommerce_wp_select( 
+		array( 
+			'id'      => 'product_cut', 
+			'label'   => __( 'Select Cut', 'woocommerce' ), 
+			'options' => array(
+				'0'		=> __( 'Select Product Cut', 'woocommerce' ),
+				'1'   => __( 'Good', 'woocommerce' ),
+				'2'   => __( 'Very Good', 'woocommerce' ),
+				'3' => __( 'Excellent', 'woocommerce' ),
+				'4' => __( 'Ideal', 'woocommerce' ),
+				'5' => __( 'Super Ideal', 'woocommerce' )
+				)
+			)
+		);
+
+		woocommerce_wp_select( 
+		array( 
+			'id'      => 'product_certification', 
+			'label'   => __( 'Certification', 'woocommerce' ), 
+			'options' => array(
+				''		=> __( 'Select Product Certification', 'woocommerce' ),
+				'GIA'   => __( 'GIA', 'woocommerce' ),
+				'AGS'   => __( 'AGS', 'woocommerce' ),
+				'EGL' => __( 'EGL', 'woocommerce' ),
+				'IGI' => __( 'IGI', 'woocommerce' ),
+				'HRD' => __( 'HRD', 'woocommerce' )
+				) 
+			)
+		);
+	 
+		woocommerce_wp_select( 
+		array( 
+			'id'      => 'product_color', 
+			'label'   => __( 'Color', 'woocommerce' ), 
+			'options' => array(
+				''		=> __( 'Select Product Color', 'woocommerce' ),
+				'9'   => __( 'M', 'woocommerce' ),
+				'8'   => __( 'L', 'woocommerce' ),
+				'7' => __( 'K', 'woocommerce' ),
+				'6' => __( 'J', 'woocommerce' ),
+				'5' => __( 'I', 'woocommerce' ),
+				'4' => __( 'H', 'woocommerce' ),
+				'3' => __( 'G', 'woocommerce' ),
+				'2' => __( 'F', 'woocommerce' ),
+				'1' => __( 'E', 'woocommerce' ),
+				'0' => __( 'D', 'woocommerce' )
+				) 
+			)
+		);
+
+		woocommerce_wp_select( 
+		array( 
+			'id'      => 'product_clarity', 
+			'label'   => __( 'Clarity', 'woocommerce' ), 
+			'options' => array(
+				''		=> __( 'Select Product Clarity', 'woocommerce' ),
+				'9' => __( 'FL', 'woocommerce' ),
+				'8' => __( 'IF', 'woocommerce' ),
+				'7' => __( 'VVS1', 'woocommerce' ),
+				'10' => __( 'VVS2', 'woocommerce' ),
+				'5' => __( 'VS1', 'woocommerce' ),
+				'4' => __( 'VS2', 'woocommerce' ),
+				'3' => __( 'SI1', 'woocommerce' ),
+				'2' => __( 'SI2', 'woocommerce' ),
+				'1'   => __( 'SI3', 'woocommerce' ),
+				'0'   => __( 'I1', 'woocommerce' ),
+				'6' => __( 'V4', 'woocommerce' )
+				) 
+			)
+		); 
+ 
+		woocommerce_wp_select( 
+		array( 
+			'id'      => 'product_polish', 
+			'label'   => __( 'Polish', 'woocommerce' ), 
+			'options' => array(
+				''		=> __( 'Select Product Polish', 'woocommerce' ),
+				'0'   => __( 'Fair', 'woocommerce' ),
+				'1'   => __( 'Good', 'woocommerce' ),
+				'2' => __( 'Very Good', 'woocommerce' ),
+				'3' => __( 'Ideal/Excellent', 'woocommerce' ),
+				) 
+			)
+		);	
+
+		woocommerce_wp_select( 
+		array( 
+			'id'      => 'product_symmetry', 
+			'label'   => __( 'Symmetry', 'woocommerce' ), 
+			'options' => array(
+				''		=> __( 'Select Product Symmetry', 'woocommerce' ),
+				'0'   => __( 'Fair', 'woocommerce' ),
+				'1'   => __( 'Good', 'woocommerce' ),
+				'2' => __( 'Very Good', 'woocommerce' ),
+				'3' => __( 'Ideal/Excellent', 'woocommerce' ),
+				) 
+			)
+		); 
+
+		woocommerce_wp_text_input( 
+	        array(
+	           'id' => 'product_depth',
+	            'placeholder' => 'Depth',
+	            'label' => __('Depth', 'woocommerce'),
+	            'type' => 'number',
+	            'custom_attributes' => array(
+	                'step' => 'any',
+	                'min' => '0',
+	                'max' => '100'
+	            )
+	        )
+	    ); 
+
+	    woocommerce_wp_text_input( 
+	        array(
+	            'id' => 'product_diamond_table',
+	            'placeholder' => 'Table',
+	            'label' => __('Table', 'woocommerce'),
+	            'type' => 'number',
+	            'custom_attributes' => array(
+	                'step' => 'any',
+	                'min' => '0',
+	                'max' => '93'
+	            )
+	        )
+	    );
+
+	    woocommerce_wp_select( 
+		array( 
+			'id'      => 'product_fluorescence', 
+			'label'   => __( 'Fluorescence', 'woocommerce' ), 
+			'options' => array(
+				''		=> __( 'Select Fluorescence', 'woocommerce' ),
+				'0'   => __( 'None', 'woocommerce' ),
+				'1'   => __( 'Faint', 'woocommerce' ),
+				'2' => __( 'Medium', 'woocommerce' ),
+				'3' => __( 'Strong', 'woocommerce' ),
+				) 
+			)
+		); 
+
+		 woocommerce_wp_text_input( 
+	        array(
+	          	'id' => 'product_measurement',
+	            'placeholder' => 'Measurement',
+	            'label' => __('Measurement', 'woocommerce'),
+	            'type' => 'text'
+	        )
+	    );  
+
+		woocommerce_wp_select( 
+		array( 
+			'id'      => 'product_shape', 
+			'label'   => __( 'Shape', 'woocommerce' ), 
+			'options' => array(
+				''		=> __( 'Select Shape', 'woocommerce' ),
+				'BR'   => __( 'Brilliant Round', 'woocommerce' ),
+				'PS'   => __( 'Pear shape', 'woocommerce' ),
+				'EM'   => __( 'Emerald', 'woocommerce' ),
+				'PR' => __( 'Princess', 'woocommerce' ),
+				'HS' => __( 'Heart Shape', 'woocommerce' ),
+				'OV' => __( 'Oval', 'woocommerce' ),
+				'RAD' => __( 'Radiant', 'woocommerce' ),
+				'CUS' => __( 'Cushion', 'woocommerce' ),
+				'SE' => __( 'Square Emerald', 'woocommerce' ),
+				) 
+			)
+		);   
+ 
+		woocommerce_wp_text_input( 
+	        array(
+	           'id' => 'product_disc',
+	            'placeholder' => '%Disc',
+	            'label' => __('%Disc', 'woocommerce'),
+	            'type' => 'number',
+	            'custom_attributes' => array(
+	                'step' => 'any',
+	                'min' => '0',
+	                'max' => '100'
+	            )
+	        )
+	    ); 
+
+		woocommerce_wp_text_input( 
+	        array(
+	          	'id' => 'product_certificate',
+	            'placeholder' => 'Certificate',
+	            'label' => __('Certificate', 'woocommerce'),
+	            'type' => 'text'
+	        )
+	    );
+
+
+		woocommerce_wp_text_input( 
+	        array(
+	          	'id' => 'product_360_image',
+	            'placeholder' => '360 image',
+	            'label' => __('360 image', 'woocommerce'),
+	            'type' => 'text'
+	        )
+	    ); 
+
+	    
+
+
+	    woocommerce_wp_text_input( 
+	        array(
+	            'id' => 'product_radio',
+	            'placeholder' => 'Radio',
+	            'label' => __('Radio', 'woocommerce'),
+	            'type' => 'number',
+	            'custom_attributes' => array(
+	                'step' => 'any',
+	                'min' => '0',
+	                'max' => '100'
+	            )
+	        )
+	    );
+
+
+	    woocommerce_wp_text_input( 
+	        array(
+	          	'id' => 'product_price_ct',
+	            'placeholder' => 'Price/Ct',
+	            'label' => __('Price/Ct', 'woocommerce'),
+	            'type' => 'text'
+	        )
+	    ); 
+ 
+	    echo '</div>';
+	}  
+
+
+	       
+
+	add_action('woocommerce_process_product_meta', 'woocommerce_product_custom_fields_save');
+	function woocommerce_product_custom_fields_save($product_id){
+
+		$product_stock_number = $_POST['product_stock_number'];
+		if (!empty($product_stock_number))
+		    update_post_meta($product_id, 'product_stock_number', esc_attr($product_stock_number));
+
+		$product_carat = $_POST['product_carat'];
+		if (!empty($product_carat))
+		    update_post_meta($product_id, 'product_carat', esc_attr($product_carat));
+
+	    $product_cut = $_POST['product_cut'];
+	    if (!empty($product_cut)) 
+	        update_post_meta($product_id, 'product_cut', esc_attr($product_cut));
+
+	   $product_certification = $_POST['product_certification'];
+	    if (!empty($product_certification))
+	        update_post_meta($product_id, 'product_certification', esc_attr($product_certification));
+
+	    $product_color = $_POST['product_color'];
+	    if (!empty($product_color))
+	        update_post_meta($product_id, 'product_color', esc_attr($product_color));
+
+	    $product_clarity = $_POST['product_clarity'];
+	    if (!empty($product_clarity))
+	        update_post_meta($product_id, 'product_clarity', esc_attr($product_clarity));  
+
+	    $product_polish = $_POST['product_polish'];
+	    if (!empty($product_polish))
+	        update_post_meta($product_id, 'product_polish', esc_attr($product_polish)); 
+
+	    $product_symmetry = $_POST['product_symmetry'];
+	    if (!empty($product_symmetry))
+	        update_post_meta($product_id, 'product_symmetry', esc_attr($product_symmetry));     
+
+	    $product_depth = $_POST['product_depth'];
+	    if (!empty($product_depth))
+	        update_post_meta($product_id, 'product_depth', esc_attr($product_depth)); 
+
+	    $product_diamond_table = $_POST['product_diamond_table'];
+	    if (!empty($product_diamond_table))
+	        update_post_meta($product_id, 'product_diamond_table', esc_attr($product_diamond_table)); 
+	          
+	    $product_fluorescence = $_POST['product_fluorescence'];
+	    if (!empty($product_fluorescence))
+	        update_post_meta($product_id, 'product_fluorescence', esc_attr($product_fluorescence));   
+
+	     $product_measurement = $_POST['product_measurement'];
+	    if (!empty($product_measurement))
+	        update_post_meta($product_id, 'product_measurement', esc_attr($product_measurement)); 
+
+	    $product_shape = $_POST['product_shape'];
+		if (!empty($product_shape))
+		    update_post_meta($product_id, 'product_shape', esc_attr($product_shape)); 
+
+		$product_disc = $_POST['product_disc']; 
+		if (!empty($product_disc))
+		    update_post_meta($product_id, 'product_disc', esc_attr($product_disc)); 
+
+		$product_certificate = $_POST['product_certificate'];
+		if (!empty($product_certificate))
+		    update_post_meta($product_id, 'product_certificate', esc_attr($product_certificate)); 
+
+	    $product_360_image = $_POST['product_360_image'];
+	    if (!empty($product_360_image))
+	        update_post_meta($product_id, 'product_360_image', esc_attr($product_360_image));  
+
+		$product_radio = $_POST['product_radio'];
+		if (!empty($product_radio))
+		update_post_meta($product_id, 'product_radio', esc_attr($product_radio));  
+
+		$product_price_ct = $_POST['product_price_ct'];
+		if (!empty($product_price_ct))
+		update_post_meta($product_id, 'product_price_ct', esc_attr($product_price_ct));  
+
+	 
+ 
+	}              
+     
+	/* filter  */
+	add_filter( 'woocommerce_product_query_meta_query', 'filter_products_with_custom_field', 10, 2 );
+	function filter_products_with_custom_field( $meta_query, $query ) {
+	    $meta_key = 'custom_text_field_delivery'; // <= Here define the meta key
+	    
+	    if ( ! is_admin() && isset($_GET[$meta_key]) && ! empty($_GET[$meta_key]) ) {
+	        $meta_query[] = array(
+	           'key'   => $meta_key,
+	           'value' => esc_attr($_GET[$meta_key]),
+	        );
+	    }
+	    return $meta_query;
+	}
+
+
+	/*  product_query  */ 
+	function product_filter_query() {
+		/*
+		if (!check_ajax_referer('_diamond', 'nonce', false)) {
+	        status_header(400);
+	        wp_send_json_error('bad_nonce');
+	    } elseif ('POST' !== $_SERVER['REQUEST_METHOD']) {
+	        status_header(405);
+	        wp_send_json_error('bad_method');
+	    }
+	    */  
+
+		extract($_POST);
+		$certification_meta['relation'] = 'OR';
+		$taxonomy_meta['relation'] = 'OR';
+
+		$taxonomy_meta_custom['relation'] = 'OR';
+
+		$taxonomies = $data['taxonomy'];
+		$clarity = $data['clarity'];
+		$cut = $data['cut'];
+		$color = $data['color'];
+		$carat = $data['carat'];
+		$certifications = $data['certification'];
+
+		$price = $data['price'];
+
+		$depth = $data['depth'];
+
+		$table = $data['table'];
+
+		$polish_val = $data['polish'];
+
+		// print_r($certifications);
+		$min_clarity = $clarity['clarity_min'];
+		$max_clarity = $clarity['clarity_max'];
+
+		$min_color = $color['color_min'];
+		$max_color = $color['color_max'];
+
+		$min_cut = $cut['cut_min'];
+		$max_cut = $cut['cut_max'];	
+
+		$min_carat = $carat['carat_min'];
+		$max_carat = $carat['carat_max'];	
+
+		$price_min = (int) filter_var($price['price_min'], FILTER_SANITIZE_NUMBER_INT); 
+		$price_max = (int) filter_var($price['price_max'], FILTER_SANITIZE_NUMBER_INT);
+
+		$depth_min = (int) filter_var($depth['depth_min'], FILTER_SANITIZE_NUMBER_INT); 
+		$depth_max = (int) filter_var($depth['depth_max'], FILTER_SANITIZE_NUMBER_INT);
+
+		$table_min = (int) filter_var($table['table_min'], FILTER_SANITIZE_NUMBER_INT); 
+		$table_max = (int) filter_var($table['table_max'], FILTER_SANITIZE_NUMBER_INT);
+
+		$taxonomy_meta_custom[] = array(
+		                'taxonomy' => 'product_cat',
+		                'field' => 'term_id',
+                        'terms' => array(41),
+		           ); 
+
+
+		if(isset($clarity)){
+			$clarity_meta =array(
+				'key' => 'product_clarity',
+				'value'     => $max_clarity,
+				'compare' => '<=',
+				 'type' => 'DECIMAL',
+			);  
+		} 	
+
+		if(isset($color)){
+			$color_meta = array(
+				'key' => 'product_color',
+				'value'     => $max_color,
+				'compare' => '<=',
+				 'type' => 'DECIMAL',
+			);  
+		} 	
+
+		if(isset($cut)){
+			$cut_meta =  array(
+				'key' => 'product_cut',
+				'value'     => $max_cut,
+				'compare' => '<=',
+				 'type' => 'DECIMAL',
+			);  
+		} 	
+
+		if(isset($cut)){
+			$carat_meta =  array(
+				'key' => 'product_carat',
+				'value'     => $max_carat,
+				'compare' => '<=',
+				 'type' => 'DECIMAL',
+			);  
+		} 
+
+		if(isset($price)){
+			$price_meta =   array(
+	            'key' => '_price',
+	            'value' => array($price_min, $price_max),
+	            'compare' => 'BETWEEN',
+	            'type' => 'DECIMAL'
+	        );
+		} 
+
+		if (isset($polish_val)) {
+			foreach($polish_val as $polish):
+				$polish_meta[] =	 array(
+					'key' => 'product_polish',
+					'value'=>$polish,
+					'compare' => '=',
+	                'type' => 'DECIMAL'
+				 );  
+			endforeach;
+		}
+
+		if(isset($depth)){
+			$depth_meta =   array(
+	            'key' => 'product_depth',
+	            'value'     => $depth_max,
+				'compare' => '<=',
+				 'type' => 'DECIMAL',
+	        );
+		}
+
+		if(isset($table)){
+			$table_meta =   array(
+	            'key' => 'product_diamond_table',
+	            'value'     => $table_max,
+				'compare' => '<=',
+				 'type' => 'DECIMAL',
+	        );
+		}
+
+		if (isset($certifications)) {
+			foreach($certifications as $certification):
+				$certification_meta[] =	 array(
+					'key' => 'product_certification',
+					'value'=>$certification,
+					'compare' => '=',
+				 );  
+			endforeach;
+		}
+ 
+		if(isset($taxonomies)){
+			foreach($taxonomies as $taxonomy):
+				$taxonomy_meta[] =  array(
+					'taxonomy' => 'diamonds',
+			        'field'    => 'id',
+			        'terms'    => $taxonomy,
+				);  
+			endforeach;
+		} else {
+           $taxonomy_meta_custom[] = array(
+                'taxonomy' => 'product_cat',
+                'field' => 'term_id',
+                'terms' => array(41), /*category name*/ 
+           ); 
+		}
+
+		$ppp = (isset($data['ppp'])) ? $data['ppp'] : 6;
+		$page = (isset($data['pageNumber'])) ? $data['pageNumber'] : 0;
+
+		header("Content-Type: text/html");
+
+
+		$args = array(
+		        'post_type' => 'product',
+				'posts_per_page' => $ppp,
+				'paged'    => $page,
+		        'tax_query' => array(
+
+		       	'relation' => 'AND',
+		       		$taxonomy_meta,
+
+		       	'relation'      => 'AND',
+		       		$taxonomy_meta_custom,
+			       ),
+
+		        'meta_query'    => array(
+		        'relation'      => 'AND',
+			      array(
+				     'relation' => 'AND',
+				     $price_meta,				       
+		  		  ),
+			      $certification_meta,
+		          array(
+			       	'relation' => 'OR',
+			         	$clarity_meta,
+			         	$color_meta,
+			         	$cut_meta,
+			         	$carat_meta,
+			         	$polish_meta,
+			         	$depth_meta,
+			         	$table_meta
+			    	 ),
+		     ),
+		  ); 
+
+		$meta_query = new WP_Query($args);
+		$data= '';
+		$i=0;
+		if ( $meta_query->have_posts() ) : 
+			 $all_pro_count=$meta_query->post_count;  
+
+            while( $meta_query->have_posts() ) :
+            	 
+                $meta_query->the_post();
+                $image = wp_get_attachment_image_src( get_post_thumbnail_id( $meta_query->post->ID ), 'single-post-thumbnail' );
+
+				if($image[0]) {
+
+				$image=$image[0];
+				} else {
+				$image=site_url().'/wp-content/uploads/woocommerce-placeholder-600x600.png';
+				}
+
+                $product = wc_get_product($meta_query->post->ID); 
+				$product_id=$meta_query->post->ID;  
+				$product = wc_get_product($product_id);
+
+				// product meta
+				$product_carat=get_post_meta($product_id, 'product_carat', true);
+				$product_stock_number=get_post_meta($product_id, 'product_stock_number', true);
+				if($product_stock_number):
+				$product_stock_data='<h3 class="text-white pb-4"><strong>Stock Number:</strong> <span>'.$product_stock_number.'</span></h3>';
+
+				endif;
+
+                $data .='<div class="col-md-4 diamond_item">
+                <div class="main-info_tooltip pro_info_data'.$i.' bg-secondary p-3 text-white" style="display: none;">
+                    '.$product_stock_data.'
+                    <div class="row">';
+                   $data .=
+                   product_meta_function($product_id,'product_carat','Carat');
+                   $data .='<div class="item_list_uniq mb-3 col-md-4">    
+					<strong>Color</strong>
+					<div class="unbold1">'.product_color($product_id,'product_color').'</div>
+					</div>'; 
+
+					$data .='<div class="item_list_uniq mb-3 col-md-4">    
+					<strong>Clarity</strong>
+					<div class="unbold1">'.product_clarity($product_id,'product_clarity').'</div>
+					</div>'; 
+
+					$data .='<div class="item_list_uniq mb-3 col-md-4">    
+					<strong>Cut</strong>
+					<div class="unbold1">'.product_cut($product_id,'product_cut').'</div>
+					</div>'; 
+
+					$data .='<div class="item_list_uniq mb-3 col-md-4">    
+					<strong>Polish</strong>
+					<div class="unbold1">'.product_polish($product_id,'product_polish').'</div>
+					</div>'; 
+
+					$data .='<div class="item_list_uniq mb-3 col-md-4">    
+					<strong>Symmetry</strong>
+					<div class="unbold1">'.product_symmetry($product_id,'product_symmetry').'</div>
+					</div>'; 
+
+					$data .=
+                   product_meta_function($product_id,'product_symmetry','Symmetry'). 
+                   product_meta_function($product_id,'product_fluorescence','Fluorescence').
+                   product_meta_function($product_id,'product_measurement','Measurement').
+                   product_meta_function($product_id,'product_certification','Certification');
+   
+   
+                  $data .='</div>
+                </div>
+                <div class="owlCarousel-viewProduct">
+                    <div class="viewProduct_body">';
+                      $data .='<img src="'.$image.'" data-id="'.$meta_query->post->ID.'" style="">';
+                     
+                        $data .='<h3><a href="'.get_permalink().'"" class="viewProduct_title">
+                            '.get_the_title().'</a></h3>';
+                        
+                        $data .='<span class="product-price mt-2 d-inline-block">'.wc_price($product->get_price()).'</span>
+                    </div>
+                    <div class="viewProduct_footer">
+                        <a href='.get_permalink().' class="cart-Btn">Add to Cart</a>
+                        <a href="javascript:void(0);" class="pro_more_info'.$i.' cart-Btn cart_01 text-primary"><i class="fa fa-info-circle"></i> <span class="d-inline-block pl-2">More Info</span></a>
+                    </div>
+                </div>';
+ 
+                $data .='<script>
+                    (function ($) {
+                    $(document).ready(function(){
+                   
+                    $(document).on("click",".pro_more_info'.$i.'",function(){
+                    $(".pro_info_data'.$i.'").toggle();
+                    });
+                    }); 
+
+                    })(jQuery);
+                </script>';
+                 
+            $data .='</div>';
+                
+             $i++;
+             endwhile ;
+	    else : 
+	         	//$data .='<div class="error_msg">';
+	            //$data .= '<h4>No diamonds match your search criteria.</h4>';
+	           // $data .= '</div>';
+	    	 $data .= '';
+	   endif; 
+		$result = array(
+			'data'	  => $data,
+			'product_count'	  => $all_pro_count
+		);
+		wp_reset_query(); 
+
+
+		wp_send_json_success($result);
+		die($data);
+	} 
+
+	add_action( 'wp_ajax_product_query', 'product_filter_query' );
+	add_action( 'wp_ajax_nopriv_product_query', 'product_filter_query' );
+ 
+	/* Theme Options */
+	if( function_exists('acf_add_options_page') ) {
+		acf_add_options_page(array(
+			'page_title' 	=> 'Theme General Settings',
+			'menu_title'	=> 'Theme Settings',
+			'menu_slug' 	=> 'theme-general-settings',
+			'capability'	=> 'edit_posts',
+			'redirect'		=> false
+		));
+
+		acf_add_options_page(
+			array( 'page_title' => __('Header'),
+			 'menu_title' => __('Header'),
+			  'parent_slug' => 'theme-general-settings', ));
+
+	} 
+
+	function register_my_menu() {
+		register_nav_menu('footer-menu-1',__( 'Footer Menu 1' ));
+		register_nav_menu('footer-menu-2',__( 'Footer Menu 2' ));
+	}
+	add_action( 'init', 'register_my_menu' );
+
+
+	/* display diamonds types */
+	add_shortcode( 'diamonds_types', 'display_diamonds_types_func' );
+	function display_diamonds_types_func() {
+
+      	$diamonds_list = get_terms( 'diamonds', array(
+    		'hide_empty' => false,
+		) );
+
+	    echo '<section class="explore_diamondSection">
+			<div class="container">
+			     <div class="diamonds-Inner">
+			       <h2 class="text-center">Explore Loose Diamonds</h2><ul class="diamonds-InnerListing owl-carousel owl-carousel-diamonds">';
+				        foreach ($diamonds_list as $list => $value) {
+				        	$term_id=$value->term_id;
+				        	$term_vals = get_term_meta($term_id);
+				        	//$image_id=$term_vals['image'][0];
+			          $image = get_field('tax_image', 'diamonds' . '_' . $term_id);
+				            //$image_url = wp_get_attachment_image_src($image_id);
+				            echo '<li class="item home_diamond" data-name="'.$value->name.'" data-id="'.$term_id.'"><a href="'.home_url('/diamond-search/').'"><img src="'.$image.'" class="img_url"><span class="diamond-name">'.$value->name.'</span></a></li>';
+				            
+				         }
+				    echo '</ul> </div>
+			</div>
+			</section>'; 
+
+	}
+
+
+	if( !function_exists('get_diamond_search_link') ) {
+	function get_diamond_search_link($template) {
+	        $args = array(
+	            'meta_key' => '_wp_page_template',
+	            'meta_value' => $template
+	        );
+	        $pages = get_pages($args);
+	        if( $pages ) {
+	            $add_link = get_permalink( $pages[0]->ID );
+	        } else {
+	            $add_link = '';
+	        }
+	        return $add_link;
+	    }
+	}
+
+	function diamond_product_setting() {
+		if (!check_ajax_referer('_diamond', 'nonce', false)) {
+	        status_header(400);
+	        wp_send_json_error('bad_nonce');
+	    } elseif ('POST' !== $_SERVER['REQUEST_METHOD']) {
+	        status_header(405);
+	        wp_send_json_error('bad_method');
+	    }  
+
+		extract($_POST); 
+		$result='';
+		$value= $data['value']; 
+		$prod_id= $data['prod_id']; 
+		$setting_page = get_diamond_search_link('template-diamond-filter.php');
+		$cart_page = wc_get_cart_url();
+
+		if($value === 'setting'){
+
+			if(isset($_SESSION['diamond_setting'])) {
+			    $settings_value = $_SESSION['diamond_setting'];
+			} else {
+			    $_SESSION['diamond_setting'] = $prod_id;
+			}
+
+			$result= array(
+				'value'	  => $value,
+				'prod_id' => $prod_id,
+				'url'	=>$setting_page
+			);
+		}
+
+		if($value === 'cart'){
+			$result= array(
+				'value'	  => $value,
+				'prod_id' => $prod_id,
+				'url'	=>$cart_page
+			);
+		}
+
+		wp_send_json_success($result);
+	} 
+
+	add_action( 'wp_ajax_product_setting', 'diamond_product_setting' );
+	add_action( 'wp_ajax_nopriv_product_setting', 'diamond_product_setting' );
+
+	function register_my_session(){
+	    if( ! session_id() ) {
+	        session_start();
+	    }
+	}
+
+	add_action('init', 'register_my_session');
+
+
+	/* custom post type team */
+
+
+
+// Our custom post type function
+function team_posttype() {
+ 
+    register_post_type( 'teams',
+
+        array(
+            'labels' => array(
+                'name' => __( 'Teams' ),
+                'singular_name' => __( 'Teams' )
+            ),
+            'public' => true,
+            'publicly_queryable' => false,
+            'supports'  => array( 'title','thumbnail','custom-fields'),
+            'rewrite' => array('slug' => 'teams'), 
+        )  
+    );
+}  
+add_action( 'init', 'team_posttype' );
+
+// Team list shortcode
+function team_list_func($atts) {
+	 $atts = shortcode_atts( array(
+        'title' => 'Meet the Team',
+        'team' => 12
+    ), $atts, 'team_list' );
+ 
+	$posts_per_page="{$atts['team']}";
+	$args = array(
+	    'post_type' => 'teams',
+	    'posts_per_page' => $posts_per_page
+	 ); 
+
+		$teamData='';
+		$team_query = new WP_Query($args);
+      	 
+        if ( $team_query->have_posts() ) : 
+        	$teamData .='<div class="team_section">';
+        	$teamData .="<div class='team_title'><h1 class='team_heading1'>{$atts['title']}</h1></div>";
+	        	$teamData .='<div class="row">';
+	            while( $team_query->have_posts() ) :
+	            $team_query->the_post(); 
+	            $teamimg=wp_get_attachment_image_src( get_post_thumbnail_id($post->ID));
+	            if($teamimg):
+	            $teamimg ='<figure><img src='.$teamimg[0].'" class="img-responsive" alt="team"></figure>';
+	            else:
+
+	         	 $teamimg ='<figure><img src='.get_stylesheet_directory_uri().'/assets/images/user-dummy-pic.png" class="img-responsive" alt="team"></figure>';
+
+	            endif;
+  
+		            $position=get_field('positions', $post->ID);
+		 			$teamData .='<div class="col-md-6 col-lg-3 inner_team">';
+		 			$teamData .='<div class="team_perdetails text-center">';
+							$teamData .=$teamimg; 
+							$teamData .='<div class="title_name-info mb-5">';
+
+							$teamData .='<h4 class="font-weight-bold">'.get_the_title().'</h4>';
+							$teamData .='<p>'.$position.'</p>';
+							$teamData .='</div>';
+					$teamData .='</div>';
+					$teamData .='</div>';
+
+            
+				
+					endwhile ;
+				$teamData .='</div>';
+			$teamData .='</div>';
+	
+			else :  
+			            
+	endif; 
+ 
+return $teamData;
+}
+add_shortcode( 'team_list', 'team_list_func' );
+
+
+/* for order traking */
+
+
+function get_traking_order() {
+
+//echo '<pre>';
+//print_r($_POST);
+	$data=$_POST['data'];
+	$order_email=$data['order_email'];
+	$order_id=$data['order_id'];
+
+
+	$order = wc_get_order( $order_id );
+
+	$data ='';
+
+	if($order) {
+	//echo '<pre>';
+	//print_r($order);
+ 
+	$order->get_total();
+
+	$order_data = $order->get_data(); 
+ 
+	$order_id = $order_data['id'];
+	$order_parent_id = $order_data['parent_id'];
+	$order_status = $order_data['status'];
+	$order_currency = $order_data['currency'];
+	$order_version = $order_data['version'];
+	$order_payment_method = $order_data['payment_method'];
+	$order_payment_method_title = $order_data['payment_method_title'];
+	$order_payment_method = $order_data['payment_method'];
+	$order_payment_method = $order_data['payment_method'];
+ 
+	$data .='<div class="order_track_data">';
+	$data .='<p>Your order status is <strong>'.$order_status.'</strong></p>';
+	$data .='<h3>Below are your order notes.</h3>';
+	$get_order_notes=get_order_notes($order_id);
+
+	$data .='<div class="order_notes">';
+	foreach ($get_order_notes as $key => $value) {
+		$data .='<p>'.$value['note_content'].'</p>';
+	}
+	$data .='</div>';
+	$data .='</div>';
+
+	} 
+	echo $data;
+
+	die();
+
+}   
+
+
+	add_action( 'wp_ajax_get_traking_order', 'get_traking_order' );
+	add_action( 'wp_ajax_nopriv_get_traking_order', 'get_traking_order' );
+
+
+	// Get Order notes
+	function get_order_notes( $order_id){
+	    global $wpdb;
+
+	    $table_perfixed = $wpdb->prefix . 'comments';
+	    $results = $wpdb->get_results("
+	        SELECT *
+	        FROM $table_perfixed
+	        WHERE  `comment_post_ID` = $order_id
+	        AND  `comment_type` LIKE  'order_note'
+	    ");
+
+	    foreach($results as $note){
+	        $order_note[]  = array(
+	            'note_id'      => $note->comment_ID,
+	            'note_date'    => $note->comment_date,
+	            'note_author'  => $note->comment_author,
+	            'note_content' => $note->comment_content,
+	        );
+	    }
+	    return $order_note;
+	}
+ 
+	function ring_clear_filter() {   
+
+
+	$data=$_POST['data'];
+
+	$ring_taxonomy_data=$data['id_list'];
+
+
+ 	if($data['type'] == "metals") {
+
+
+ 
+	$taxonomy_data_list=$_COOKIE['taxonomy_data_list'];
+
+	$new_data=str_replace('|'.$ring_taxonomy_data,"|",$taxonomy_data_list);
+
+	wc_setcookie('taxonomy_data_list', $new_data); 
+ 
+
+
+
+} elseif ($data['type'] == "ring_style") {
+
+   
+   	//ring_style_taxonomy_data_list 
+
+   	$ring_taxonomy_id=$ring_style_taxonomy_data; 
+
+	if ( empty( $_COOKIE['ring_style_taxonomy_data_list'] ) )
+	$ring_taxonomy_product = array();
+	else
+	$ring_taxonomy_product = (array) explode( '|', $_COOKIE['ring_style_taxonomy_data_list'] );
+
+	if ( ! in_array($ring_taxonomy_id, $ring_taxonomy_product ) ) {
+	$ring_taxonomy_product[] = $ring_taxonomy_id;
+	}
+
+	if ( sizeof( $ring_taxonomy_product ) > 15 ) {
+	array_shift( $ring_taxonomy_product );
+	} 
+
+	// Store for session only
+
+	// Expiry of the cookie. 
+	$expire = -1;  
+
+	$secure = 'no';  
+
+	// NOTICE! Understand what this does before running. 
+	wc_setcookie('ring_style_taxonomy_data_list', implode( '|', $ring_taxonomy_product ), $expire, $secure);
+
+	}   else {}
+	die();
+
+
+	}
+
+
+ 	add_action( 'wp_ajax_ring_clear_filter', 'ring_clear_filter' );
+	add_action( 'wp_ajax_nopriv_ring_clear_filter', 'ring_clear_filter' );
+
+
+
+
+
+
+
+	function ring_template_filter() {   
+
+  	$data=$_POST['data'];
+	$ring_taxonomy_data=$data['id_list'];
+  	$ring_style_taxonomy_data=$data['id_list'];
+	
+
+  	$price_min=$data['price_min'];
+  	$price_max=$data['price_max'];
+
+
+  
+  	//die();
+
+ 	if($data['type'] == "metals") {
+
+	$taxonomy_id=$ring_taxonomy_data; 
+
+	if ( empty( $_COOKIE['taxonomy_data_list'] ) )
+	$taxonomy_product = array();
+	else
+	$taxonomy_product = (array) explode( '|', $_COOKIE['taxonomy_data_list'] );
+
+	if ( ! in_array($taxonomy_id, $taxonomy_product ) ) {
+	$taxonomy_product[] = $taxonomy_id;
+	}
+
+	if ( sizeof( $taxonomy_product ) > 15 ) {
+	array_shift( $taxonomy_product );
+	} 
+
+	// Store for session only
+
+	// Expiry of the cookie. 
+	$expire = -1;  
+
+	$secure = 'no';  
+
+	// NOTICE! Understand what this does before running. 
+	wc_setcookie('taxonomy_data_list', implode( '|', $taxonomy_product ), $expire, $secure); 
+
+} elseif ($data['type'] == "ring_style") {
+
+   
+   	//ring_style_taxonomy_data_list 
+
+   	$ring_taxonomy_id=$ring_style_taxonomy_data; 
+
+	if ( empty( $_COOKIE['ring_style_taxonomy_data_list'] ) )
+	$ring_taxonomy_product = array();
+	else
+	$ring_taxonomy_product = (array) explode( '|', $_COOKIE['ring_style_taxonomy_data_list'] );
+
+	if ( ! in_array($ring_taxonomy_id, $ring_taxonomy_product ) ) {
+	$ring_taxonomy_product[] = $ring_taxonomy_id;
+	}
+
+	if ( sizeof( $ring_taxonomy_product ) > 15 ) {
+	array_shift( $ring_taxonomy_product );
+	} 
+
+	// Store for session only
+
+	// Expiry of the cookie. 
+	$expire = -1;  
+
+	$secure = 'no';  
+
+	// NOTICE! Understand what this does before running. 
+	wc_setcookie('ring_style_taxonomy_data_list', implode( '|', $ring_taxonomy_product ), $expire, $secure);
+
+	}   else {}
+	//die();
+
+	extract($_POST);  
+
+ 
+		
+
+		$price = $data['price'];
+ 
+	
+
+		// print_r($certifications);
+		$min_clarity = $clarity['clarity_min'];
+		$max_clarity = $clarity['clarity_max'];
+
+		$min_color = $color['color_min'];
+		$max_color = $color['color_max'];
+
+		$min_cut = $cut['cut_min'];
+		$max_cut = $cut['cut_max'];	
+
+		$min_carat = $carat['carat_min'];
+		$max_carat = $carat['carat_max'];	
+
+		$price_min = (int) filter_var($price_min, FILTER_SANITIZE_NUMBER_INT); 
+		$price_max = (int) filter_var($price_max, FILTER_SANITIZE_NUMBER_INT);
+
+		$depth_min = (int) filter_var($depth['depth_min'], FILTER_SANITIZE_NUMBER_INT); 
+		$depth_max = (int) filter_var($depth['depth_max'], FILTER_SANITIZE_NUMBER_INT);
+
+		$table_min = (int) filter_var($table['table_min'], FILTER_SANITIZE_NUMBER_INT); 
+		$table_max = (int) filter_var($table['table_max'], FILTER_SANITIZE_NUMBER_INT);
+
+
+
+
+		if($price_max ==0){
+
+			$price_max=5000;
+		}   
+
+		
+		$price_meta =   array(
+	            'key' => '_price',
+	            'value' => array($price_min, $price_max),
+	            'compare' => 'BETWEEN',
+	            'type' => 'DECIMAL'
+	        ); 
+	
+ 
+
+		$get_terms_ids = ! empty( $_COOKIE['taxonomy_data_list'] ) ? (array) explode( '|', $_COOKIE['taxonomy_data_list'] ) : array();
+		$get_terms_ids = array_filter( array_map( 'absint', $get_terms_ids ) );
+		
+ 		//$terms=array($taxonomy);   
+		//$terms=array(52);
+		 
+		$taxonomy_meta=array(
+			'taxonomy' => 'metals',
+			'field'    => 'id',
+			'terms'    => $get_terms_ids
+		); 
+
+
+		$ring_terms_ids = ! empty( $_COOKIE['ring_style_taxonomy_data_list'] ) ? (array) explode( '|', $_COOKIE['ring_style_taxonomy_data_list'] ) : array();
+		$ring_terms_ids = array_filter( array_map( 'absint', $ring_terms_ids ) );
+		
+ 		//$terms=array($taxonomy);   
+		//$terms=array(52);
+		  
+		$ring_style_taxonomy_meta=array(
+			'taxonomy' => 'ring-style',
+			'field'    => 'id',
+			'terms'    => $ring_terms_ids
+		); 
+   
+		
+		$args = array(
+		        'post_type' => 'product',
+		        'posts_per_page' => -1,
+		        'tax_query' => array(
+		       	'relation' => 'AND',
+		       		$taxonomy_meta,
+		       		$ring_style_taxonomy_meta
+			       ),
+		        'meta_query'    => array(
+		        'relation'      => 'AND',
+			      array(
+				     'relation' => 'AND',
+				     $price_meta,				       
+		  		  ),
+		     ), 
+
+		  );    
+  
+
+		//echo '<pre>';
+		//	print_r($args);
+ 
+  
+		$meta_query = new WP_Query($args);
+		$data= '';
+		$i=0;
+		if ( $meta_query->have_posts() ) : 
+			 $all_pro_count=$meta_query->post_count;  
+
+            while( $meta_query->have_posts() ) : 
+            	 
+                $meta_query->the_post();
+                $image = wp_get_attachment_image_src( get_post_thumbnail_id( $meta_query->post->ID ), 'single-post-thumbnail' );
+                $product = wc_get_product($meta_query->post->ID); 
+				$product_id=$meta_query->post->ID;  
+				$product = wc_get_product($product_id);
+
+				// product meta
+				$product_carat=get_post_meta($product_id, 'product_carat', true);
+				$product_stock_number=get_post_meta($product_id, 'product_stock_number', true);
+				if($product_stock_number):
+				$product_stock_data='<h3 class="text-white pb-4"><strong>Stock Number:</strong> <span>'.$product_stock_number.'</span></h3>';
+
+				endif;  
+
+                $data .='<div class="col-md-4 diamond_item">
+                <div class="owlCarousel-viewProduct">
+                    <div class="viewProduct_body">';
+                      $data .='<img src="'.$image[0].'" data-id="'.$meta_query->post->ID.'" style="">';
+                     
+                        $data .='<h3><a href="'.get_permalink().'"" class="viewProduct_title">
+                            '.get_the_title().'</a></h3>';
+                        
+                        $data .='<span class="product-price mt-2 d-inline-block">'.wc_price($product->get_price()).'</span>
+                    </div>
+                    <div class="viewProduct_footer">
+                        <a href='.get_permalink().' class="cart-Btn">Add to Cart</a>
+                    </div> 
+                </div>';
+ 
+                 
+            $data .='</div>';
+                
+             $i++;
+             endwhile ;
+	    else : 
+	         	//$data .='<div class="error_msg">';
+	           // $data .= '<h4>No diamonds match your search criteria.</h4>';
+	           // $data .= '</div>';
+	    	 $data .= '';
+	   endif; 
+		$result = array(
+			'data'	  => $data
+		);
+		wp_send_json_success($result);
+	} 
+
+	add_action( 'wp_ajax_ring_template_filter', 'ring_template_filter' );
+	add_action( 'wp_ajax_nopriv_ring_template_filter', 'ring_template_filter' );
+
+	/* Product meta function */
+	function product_meta_function($product_id,$product_key,$title) {
+	$product_key=get_post_meta($product_id, $product_key, true);
+	$product_meta_data='';
+
+	if($product_key):
+    $product_meta_data .='<div class="item_list_uniq mb-3 col-md-4">    
+        		<strong>'.$title.'</strong>
+       		 	<div class="unbold1">'.$product_key.'</div>
+    		</div>';
+
+    endif;
+
+    return $product_meta_data;
+
+	}
+
+	/* Product meta function for single product */
+	function product_meta_single($product_id,$product_key,$title) {
+	$product_key=get_post_meta($product_id, $product_key, true);
+	$product_meta_data='';
+
+	if($product_key):
+
+    $product_meta_data .='<div class="product-specs__listing-item">
+                     <div>'.$title.':</div>
+                     <div>'.$product_key.'</div>
+                  </div>';
+
+    endif;
+
+    return $product_meta_data;
+
+	}
+
+
+function rc_woocommerce_recently_viewed_products( $atts, $content = null ) {
+
+	// Get shortcode parameters
+	extract(shortcode_atts(array(
+		"per_page" => '5'
+	), $atts));
+
+	// Get WooCommerce Global
+	global $woocommerce;
+ 
+ 	//echo '<pre>'; 
+ 	//print_r($_COOKIE);
+
+	// Get recently viewed product cookies data
+	$viewed_products = ! empty( $_COOKIE['woocommerce_recently_viewed'] ) ? (array) explode( '|', $_COOKIE['woocommerce_recently_viewed'] ) : array();
+	$viewed_products = array_filter( array_map( 'absint', $viewed_products ) );
+
+	// If no data, quit
+	if ( empty( $viewed_products ) )
+		return __( 'nodata', '' );
+
+	// Create the object
+	ob_start();
+
+	// Get products per page
+	if( !isset( $per_page ) ? $number = 5 : $number = $per_page )
+
+	// Create query arguments array
+    $query_args = array(
+    				'posts_per_page' => $number, 
+    				'no_found_rows'  => 1, 
+    				'post_status'    => 'publish', 
+    				'post_type'      => 'product', 
+    				'post__in'       => $viewed_products
+    				);
+
+	// Add meta_query to query args
+	$query_args['meta_query'] = array();
+
+    // Check products stock status
+    $query_args['meta_query'][] = $woocommerce->query->stock_status_meta_query();
+
+	// Create a new query
+	$r = new WP_Query($query_args);
+
+	// If query return results
+	if ( $r->have_posts() ) {
+
+		$content = '<tbody>';
+
+		// Start the loop
+		while ( $r->have_posts()) {
+			$r->the_post();
+			global $product;
+			$product_id=$r->post->ID; 
+
+            $product = wc_get_product($product_id);
+			$product_carat=get_post_meta($product_id, 'product_carat', true);
+			$product_color=product_color($product_id, 'product_color');
+			$product_clarity=product_clarity($product_id, 'product_clarity');
+			$product_cut=product_cut($product_id, 'product_cut');
+			$product_polish=product_polish($product_id, 'product_polish');
+
+			$product_symmetry=product_symmetry($product_id, 'product_symmetry');
+			$product_fluorescence=get_post_meta($product_id, 'product_fluorescence', true);
+			$product_measurement=get_post_meta($product_id, 'product_measurement', true);
+			$product_certification=get_post_meta($product_id, 'product_certification', true);
+  			$pro_image = wp_get_attachment_image_src( get_post_thumbnail_id( $product_id ), 'single-post-thumbnail' );
+
+
+  			if($pro_image[0]) {
+
+  				$pro_image=$pro_image[0];
+			} else {
+				$pro_image=site_url().'/wp-content/uploads/woocommerce-placeholder-600x600.png';
+  			}
+
+			$content .='<tr class="list-row inCompare" >
+                                <td>'.get_the_title().'</td>
+                                <td ><img width="68" height="68" src="'.$pro_image.'" alt="" class="img-responsive ld-inner-img ds__image" /></td>
+                                <td class="hidden-xs" ><strong >Pear</strong></td>
+                                <td >'.$product_carat.'</td>
+                                <td class="hidden-xs" >'.$product_color.'</td>
+                                <td class="hidden-xs" >'.$product_clarity.'</td>
+                                <td >'.$product_cut.'</td>
+                                <td class="hidden-xs" ><strong class="color-link" >IGI</strong></td>
+                                <td class="hidden-xs" ><strong >'.$product->get_price_html().'</strong></td>
+                                <td class="details hidden-xs" ><a href='.get_permalink().'><span class="hidden-xs hidden-sm" >Details</span> &gt;</td>
+                            </tr>';
+		}
+
+		$content .= '</tbody>';
+
+	}  
+
+	// Get clean object
+	$content .= ob_get_clean();
+	
+	// Return whole content
+	return $content;
+}
+
+// Register the shortcode
+add_shortcode("woocommerce_recently_viewed_products", "rc_woocommerce_recently_viewed_products");
+
+
+// create product view function
+function custom_track_product_view() {
+    if ( ! is_singular( 'product' ) ) {
+        return;
+    }  
+
+    global $post;
+
+    if ( empty( $_COOKIE['woocommerce_recently_viewed'] ) )
+        $viewed_products = array();
+    else
+        $viewed_products = (array) explode( '|', $_COOKIE['woocommerce_recently_viewed'] );
+
+    if ( ! in_array( $post->ID, $viewed_products ) ) {
+        $viewed_products[] = $post->ID;
+    }
+
+    if ( sizeof( $viewed_products ) > 15 ) {
+        array_shift( $viewed_products );
+    }
+
+    // Store for session only
+    wc_setcookie( 'woocommerce_recently_viewed', implode( '|', $viewed_products ) );
+}
+
+add_action( 'template_redirect', 'custom_track_product_view', 20 );
+
+
+
+/* display diamonds types for homepage */
+	add_shortcode( 'diamonds_types_home', 'display_diamonds_types_func_home' );
+	function display_diamonds_types_func_home() {
+
+      	$diamonds_list = get_terms( 'diamonds', array(
+    		'hide_empty' => false,
+		) );
+
+	    echo '<div class="diamonds_types_home textwidget custom-html-widget"><p class="head-01mega mb-2"><strong>Search all Diamonds</strong></p><ul class="first_search megamenu0-1">';
+				        foreach ($diamonds_list as $list => $value) {  
+				        	$term_id=$value->term_id;
+				        	$term_vals = get_term_meta($term_id);
+				        	//$image_id=$term_vals['image'][0];
+			         	$image = get_field('tax_image', 'diamonds' . '_' . $term_id);
+				            //$image_url = wp_get_attachment_image_src($image_id);
+				            echo '<li class="item home_diamond" data-name="'.$value->name.'" data-id="'.$term_id.'"><a href="'.home_url('/diamond-search/').'"><img src="'.$image.'" class="img_url"><span class="diamond-name">'.$value->name.'</span></a></li>';
+				            
+				         }
+				    echo '</ul></div>'; 
+
+	}
+
+
+
+	//product compare function 
+	function compare_product_func() {
+	$product_id=$_POST['product_id'];
+
+	if ( empty( $_COOKIE['compare_product_list'] ) )
+	$compare_product = array();
+	else
+	$compare_product = (array) explode( '|', $_COOKIE['compare_product_list'] );
+
+	if ( ! in_array($product_id, $compare_product ) ) {
+	$compare_product[] = $product_id;
+	}
+
+	if ( sizeof( $compare_product ) > 15 ) {
+	array_shift( $compare_product );
+	}
+
+	// Store for session only
+	wc_setcookie( 'compare_product_list', implode( '|', $compare_product ) );
+	die();      
+
+	} 
+ 
+	add_action( 'wp_ajax_compare_product', 'compare_product_func' );
+	add_action( 'wp_ajax_nopriv_compare_product', 'compare_product_func' );
+
+
+function displayed_compare_products( $atts, $content = null ) {
+
+	// Get shortcode parameters
+	extract(shortcode_atts(array(
+		"per_page" => '5'
+	), $atts));
+
+	// Get WooCommerce Global
+	global $woocommerce;
+ 
+ 	//echo '<pre>'; 
+ 	//print_r($_COOKIE); 
+
+	// Get recently viewed product cookies data
+	$compare_product = ! empty( $_COOKIE['compare_product_list'] ) ? (array) explode( '|', $_COOKIE['compare_product_list'] ) : array();
+	$compare_product = array_filter( array_map( 'absint', $compare_product ) );
+
+	// If no data, quit
+	if ( empty( $compare_product ) )
+		return __( 'nodata', '' );
+
+	// Create the object
+	ob_start(); 
+
+	// Get products per page
+	if( !isset( $per_page ) ? $number = 5 : $number = $per_page )
+
+	// Create query arguments array
+    $query_args = array(
+    				'posts_per_page' => $number, 
+    				'no_found_rows'  => 1, 
+    				'post_status'    => 'publish', 
+    				'post_type'      => 'product', 
+    				'post__in'       => $compare_product
+    				);
+
+	// Add meta_query to query args
+	$query_args['meta_query'] = array();
+
+    // Check products stock status
+    $query_args['meta_query'][] = $woocommerce->query->stock_status_meta_query();
+ 
+	// Create a new query
+	$r = new WP_Query($query_args);
+
+	// If query return results
+	if ( $r->have_posts() ) {
+
+		$content = '<tbody>';
+
+	while ( $r->have_posts()) {
+			$r->the_post();
+			global $product;
+			$product_id=$r->post->ID; 
+
+            $product = wc_get_product($product_id);
+			$product_carat=get_post_meta($product_id, 'product_carat', true);
+			$product_color=product_color($product_id, 'product_color', true);
+			$product_clarity=product_clarity($product_id, 'product_clarity', true);
+			$product_cut=product_cut($product_id, 'product_cut', true);
+			$product_polish=product_polish($product_id, 'product_polish', true);
+
+			$product_symmetry=product_symmetry($product_id, 'product_symmetry', true);
+			$product_fluorescence=get_post_meta($product_id, 'product_fluorescence', true);
+			$product_measurement=get_post_meta($product_id, 'product_measurement', true);
+			$product_certification=get_post_meta($product_id, 'product_certification', true);
+ 			$pro_image = wp_get_attachment_image_src( get_post_thumbnail_id($product_id), 'single-post-thumbnail' );
+
+			if($pro_image[0]) {
+
+			$pro_image=$pro_image[0];
+			} else {
+			$pro_image=site_url().'/wp-content/uploads/woocommerce-placeholder-600x600.png';
+			}
+
+			$content .='<tr class="list-row inCompare" >
+                                <td>'.get_the_title().'</td>
+                                <td ><img width="68" height="68" src="'.$pro_image.'" alt="" class="img-responsive ld-inner-img ds__image" /></td>
+                                <td class="hidden-xs" ><strong >Pear</strong></td>
+                                <td >'.$product_carat.'</td>
+                                <td class="hidden-xs" >'.$product_color.'</td>
+                                <td class="hidden-xs" >'.$product_clarity.'</td>
+                                <td >'.$product_cut.'</td>
+                                <td class="hidden-xs" ><strong class="color-link" >IGI</strong></td>
+                                <td class="hidden-xs" ><strong >'.$product->get_price_html().'</strong></td>
+                                <td class="details hidden-xs" ><a href='.get_permalink().'><span class="hidden-xs hidden-sm" >Details</span> &gt;</td>
+                            </tr>';
+		}
+		$content .= '</tbody>';
+
+	} 
+
+	// Get clean object
+	$content .= ob_get_clean();
+	
+	// Return whole content
+	return $content; 
+}
+// Register the shortcode
+add_shortcode("compare_products", "displayed_compare_products");
+
+ 
+ 
+ 
+	// add diamond func
+	function add_diamond_func() {
+
+$product_type=$_POST['product_type'];
+
+ $product_id=$_POST['product_id'];
+
+$add_ring_product = $_COOKIE['add_ring_product'];
+$add_diamond_product = $_COOKIE['add_diamond_product'];
+
+if($product_type =="ring") {
+	wc_setcookie( 'add_ring_product', $product_id);
+
+	$result = array(
+	'status'   => 1,
+	'msg'	   => 'ring'
+	);
+ 
+} else {
+	wc_setcookie( 'add_diamond_product', $product_id);
+
+	$result = array(
+	'status'	  => 1,
+	'msg'	      => 'diamond'
+	);
+}  
+	
+wp_send_json_success($result);
+
+	}   
+  
+	add_action( 'wp_ajax_add_diamond', 'add_diamond_func' );
+	add_action( 'wp_ajax_nopriv_add_diamond', 'add_diamond_func' );
+
+
+
+function custom_add_to_cart_func() {
+
+ $add_ring_product =$_COOKIE['add_ring_product'];
+ $add_diamond_product =$_COOKIE['add_diamond_product'];
+$result='';
+WC()->cart->add_to_cart( $add_ring_product );
+WC()->cart->add_to_cart( $add_diamond_product);
+
+ $result = array(
+	'status'	  => 1,
+	'msg'	      => 'added'
+	);
+
+	
+wp_send_json_success($result);
+
+}   
+  
+add_action( 'wp_ajax_custom_addcart', 'custom_add_to_cart_func' );
+add_action( 'wp_ajax_nopriv_custom_addcart', 'custom_add_to_cart_func' );
+
+
+/* Add Diamond bag product */ 
+function add_diamond_bag_pro_func() {
+
+$result='';
+WC()->cart->add_to_cart(4645);
+
+ $result = array(
+	'status'	  => 1,
+	'msg'	      => 'added'
+	);
+
+	
+wp_send_json_success($result);
+
+}   
+  
+add_action( 'wp_ajax_add_diamond_bag', 'add_diamond_bag_pro_func' );
+add_action( 'wp_ajax_nopriv_add_diamond_bag', 'add_diamond_bag_pro_func' );
+
+
+// Why Innovation shortcode */
+function why_innovation_func() {
+
+	$html ='';
+
+	$html .='<div class="why_diamonds my-5">
+            <h2 class="text-center w-100 mb-4">Why Innovation Diamonds ?</h2>
+            <div class="row">';
+               
+         if( have_rows('support_list', 'option') ):
+
+         while( have_rows('support_list', 'option') ) : the_row();
+         $title = get_sub_field('title');
+          $sub_title = get_sub_field('sub_title');
+         $image = get_sub_field('image');
+  
+      
+        	$html .='<div class="col-md-3">
+                    <div class="why_details_diamond text-center">';
+                         if($image): 
+            $html .='<img src='.$image.'" alt="img">';
+                        endif; 
+
+					if($title): 
+            $html .='<h4 class="my-2 font-weight-bold">'.$title.'</h4>';
+                     endif; 
+
+                    if($sub_title): 
+             $html .= '<p>'.$sub_title.'</p>';
+                     endif;
+
+            $html .='</div>
+                </div>';
+
+			endwhile;
+
+			else :
+
+			endif;
+ 
+
+         $html .='</div>
+        </div>';
+
+        return $html;
+
+    }  
+         
+          
+//Why Innovation shortcode
+add_shortcode( 'why_innovation', 'why_innovation_func' );  
+
+
+
+// product  func 
+
+function product_shape($product_id,$key) {
+
+	$data=get_post_meta($product_id, $key, true);
+
+	if($data =="PS") { $val='Pear shape'; }
+	elseif($data =="BR") { $val='Brilliant Round'; } 
+	elseif($data =="EM") { $val='Emerald'; } 
+	elseif($data =="PR") { $val='Princess'; }
+	elseif($data =="HS") { $val='Heart Shape'; } 
+	elseif($data =="OV") { $val='Oval'; } 
+	elseif($data =="RAD") { $val='Radiant'; } 
+	elseif($data =="CUS") { $val='Cushion'; } 
+	elseif($data =="SE") { $val='Square Emerald'; } 
+	else{ $val=''; }
+
+	return $val;
+  
+}     
+
+
+function product_color($product_id,$key) {
+
+	$data=get_post_meta($product_id, $key, true);
+
+	if($data ==9) { $val='M'; } elseif($data ==8) { $val='L'; } elseif($data ==7) { $val='K'; } elseif($data ==6) { $val='J'; } elseif($data ==5) { $val='I'; } elseif($data ==4) { $val='H'; } elseif($data ==3) { $val='G'; } elseif($data ==2) { $val='F'; } elseif($data ==1) { $val='E'; } else{ $val='D'; }
+
+	return $val;
+
+} 
+
+function product_cut($product_id,$key) {
+
+	$data=get_post_meta($product_id, $key, true);
+
+	if($data ==5) { $val='Super Ideal'; } elseif($data ==4) { $val='Ideal'; } elseif($data ==3) { $val='Excellent'; } elseif($data ==2) { $val='Very Good'; } elseif($data ==1) { $val='Good'; } else{ $val=''; }
+
+	return $val;
+
+}   
+
+function product_symmetry($product_id,$key) {
+
+	$data=get_post_meta($product_id, $key, true);
+
+	if($data ==0) { $val='Fair'; } elseif($data ==1) { $val='Good'; } elseif($data ==2) { $val='Very Good'; } elseif($data ==3) { $val='Ideal/Excellent'; } else{ $val=''; }
+
+	return $val;
+
+}    
+
+function product_polish($product_id,$key) {
+
+	$data=get_post_meta($product_id, $key, true);
+
+	if($data ==0) { $val='Fair'; } elseif($data ==1) { $val='Good'; } elseif($data ==2) { $val='Very Good'; } elseif($data ==3) { $val='Ideal/Excellent'; } else{ $val=''; }
+
+	return $val;
+
+}   
+
+function product_fluorescence($product_id,$key) {
+
+	$data=get_post_meta($product_id, $key, true);
+
+	if($data ==0) { $val='None'; } elseif($data ==1) { $val='Faint'; } elseif($data ==2) { $val='Medium'; } elseif($data ==3) { $val='Strong'; } else{ $val=''; }
+
+	return $val;
+
+} 
+
+function product_clarity($product_id,$key) {
+
+	$data=get_post_meta($product_id, $key, true);
+
+	if($data ==0) { $val='I1'; }
+	elseif($data ==1) { $val='SI3'; } 
+	elseif($data ==2) { $val='SI2'; }
+	elseif($data ==3) { $val='SI1'; } 
+	elseif($data ==4) { $val='VS2'; } 
+	elseif($data ==5) { $val='VS1'; } 
+	elseif($data ==6) { $val='VVS2'; } 
+	elseif($data ==7) { $val='VVS1'; } 
+	elseif($data ==8) { $val='IF'; } 
+	elseif($data ==9) { $val='FL'; } 
+	elseif($data ==10) { $val='VVS2'; } 
+	else{ $val=''; }
+
+	return $val;
+
+}  
+
+
+
+
+ 
+function not_reg_func(){
+$html ='';
+
+if (!is_user_logged_in() ): 
+$html .='<p style="margin: 15px;text-align: center;">Not Registered User? Click here to <a href="'.site_url().'/register/">register</a></p>';
+endif; 
+
+return $html;
+
+}
+add_shortcode( 'reg_message', 'not_reg_func' );
+
+
+/* total product count */
+function product_count_shortcode( ) {
+	       $count_posts = wp_count_posts( 'product' );
+	return $count_posts->publish;
+}
+add_shortcode( 'product_count', 'product_count_shortcode' );
+
+ 	wp_localize_script( 'core-js', 'ajax_posts', array(
+	    'ajaxurl' => admin_url( 'admin-ajax.php' ),
+	    'noposts' => __('No older posts found', 'twentyfifteen'),
+	));	
+
+wp_register_script( 'core-js', get_template_directory_uri() . '/assets/js/core.js');
+wp_enqueue_script( 'core-js' );
+
+wp_localize_script( 'core-js', 'ajax_posts', array(
+    'ajaxurl' => admin_url( 'admin-ajax.php' ),
+    'noposts' => __('No older posts found', 'twentyfifteen'),
+));
+
+	wp_register_script( 'core-js', get_template_directory_uri() . '/assets/js/core.js');
+	wp_enqueue_script( 'core-js' );
+
+function more_post_ajax(){
+
+    $ppp = (isset($_POST["ppp"])) ? $_POST["ppp"] : 3;
+    $page = (isset($_POST['pageNumber'])) ? $_POST['pageNumber'] : 0;
+
+    header("Content-Type: text/html");
+
+    $args = array(
+        'suppress_filters' => true,
+        'post_type' => 'product',
+        'posts_per_page' => $ppp,
+        'paged'    => $page,
+    );
+
+    $loop = new WP_Query($args);
+
+    $out = '';
+
+    if ($loop -> have_posts()) :  while ($loop -> have_posts()) : $loop -> the_post();
+        $out .= '<div class="small-12 large-4 columns">
+                <h1>'.get_the_title().'</h1>
+                <p>'.get_the_content().'</p>
+         </div>';
+
+    endwhile;
+    endif;
+    wp_reset_postdata();
+    die($out);
+}
+
+add_action('wp_ajax_nopriv_more_post_ajax', 'more_post_ajax');
+add_action('wp_ajax_more_post_ajax', 'more_post_ajax');

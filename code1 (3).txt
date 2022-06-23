@@ -1,0 +1,1623 @@
+<?php
+/* for print_r value */
+function pr($pr){
+    $print_r ='';
+    $print_r .='<pre>';
+    $print_r .= print_r($pr);
+    $print_r .='</pre>';
+ 
+    return $print_r;
+ 
+ } 
+/**
+ * @package BuddyBoss Child
+ * The parent theme functions are located at /buddyboss-theme/inc/theme/functions.php
+ * Add your own functions at the bottom of this file.
+ */
+/* * **************************** THEME SETUP ***************************** */
+
+/**
+ * Sets up theme for translation
+ *
+ * @since BuddyBoss Child 1.0.0
+ */
+function buddyboss_theme_child_languages() {
+    /**
+     * Makes child theme available for translation.
+     * Translations can be added into the /languages/ directory.
+     */
+    // Translate text from the PARENT theme.
+    load_theme_textdomain('buddyboss-theme', get_stylesheet_directory() . '/languages');
+
+    // Translate text from the CHILD theme only.
+    // Change 'buddyboss-theme' instances in all child theme files to 'buddyboss-theme-child'.
+    // load_theme_textdomain( 'buddyboss-theme-child', get_stylesheet_directory() . '/languages' );
+}
+
+add_action('after_setup_theme', 'buddyboss_theme_child_languages');
+
+/**
+ * Enqueues scripts and styles for child theme front-end.
+ *
+ * @since Boss Child Theme  1.0.0
+ */
+function buddyboss_theme_child_scripts_styles() {
+    /**
+     * Scripts and Styles loaded by the parent theme can be unloaded if needed
+     * using wp_deregister_script or wp_deregister_style.
+     *
+     * See the WordPress Codex for more information about those functions:
+     * http://codex.wordpress.org/Function_Reference/wp_deregister_script
+     * http://codex.wordpress.org/Function_Reference/wp_deregister_style
+     * */
+    // Styles
+    wp_enqueue_style('buddyboss-child-css', get_stylesheet_directory_uri() . '/assets/css/custom.css', '', '1.1.0');
+
+    // Javascript
+    wp_enqueue_script('buddyboss-child-moment-js', 'https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.17.1/moment.js', '', '1.1.0');
+    
+    //wp_enqueue_script('buddyboss-child-chart-js', get_stylesheet_directory_uri() . '/assets/js/chart.js', '', '1.2.0');
+    wp_enqueue_script('buddyboss-child-chart-js', 'https://code.highcharts.com/highcharts.js', '', '1.2.0');
+    wp_enqueue_script('buddyboss-child-exporting-js', 'https://code.highcharts.com/modules/exporting.js', '', '1.1.0');
+    wp_enqueue_script('buddyboss-child-drilldown-js', 'https://code.highcharts.com/modules/drilldown.js', '', '1.1.0');
+    wp_enqueue_script('buddyboss-child-js', get_stylesheet_directory_uri() . '/assets/js/custom.js', '', '1.3.0');
+    wp_localize_script('buddyboss-child-js', 'ajax_call', ['ajaxurl' => admin_url('admin-ajax.php')]);
+}
+
+add_action('wp_enqueue_scripts', 'buddyboss_theme_child_scripts_styles', 9999);
+
+
+/* * **************************** CUSTOM FUNCTIONS ***************************** */
+
+// Add your own custom functions here
+//function stripe_connect() {
+//    $stripe = new \Stripe\StripeClient(
+//            'sk_test_4eC39HqLyjWDarjtT1zdp7dc'
+//    );
+//    print_r($stripe);exit;
+//    $stripe->accounts->create([
+//        'type' => 'custom',
+//        'country' => 'US',
+//        'email' => 'jenny.rosen@example.com',
+//        'capabilities' => [
+//            'card_payments' => ['requested' => true],
+//            'transfers' => ['requested' => true],
+//        ],
+//    ]);
+//}
+//
+//add_action("wp_ajax_stripe_connect", "stripe_connect");
+//add_action("wp_ajax_nopriv_stripe_connect", "stripe_connect");
+
+
+
+function woocommerce_stripe_connect_user() {
+    $settings = get_option('woocommerce_stripe_settings');
+    $user = wp_get_current_user();
+    if (!$settings) {
+        return;
+    }
+    $user_id = get_current_user_id();
+    $memberships = wc_memberships_get_user_active_memberships($user_id);
+    $arr = ["leadership-standard-plan", "leadership-basic-plan", "organization-premium-membership", "organization-basic-membership", "organization-standard-membership", "organization-enterprise-membership-copy-2"];
+    if (!empty($memberships)) {
+        foreach ($memberships as $key => $m) {
+            if (in_array($m->plan->slug, $arr)) {
+                $publishable_key = $settings['testmode'] == 'yes' ? $settings['test_publishable_key'] : $settings['publishable_key'];
+                $client_id = $settings['testmode'] == 'yes' ? $settings['client_test_id'] : $settings['client_live_id'];
+                $secret_key = $settings['testmode'] == 'yes' ? $settings['test_secret_key'] : $settings['secret_key'];
+                ?><div class="wcv_stripe_connect_container bp-widget profile-page"><h3 class="screen-heading profile-group-title profile-group-title_strip_connect"><?php _e('Connect with Stripe', 'buddypress'); ?></h3>
+                <?php
+                $key = get_user_meta(get_current_user_id(), '_stripe_connect_access_key', true);
+                if (empty($key)) {
+                    echo '<div class="wcv_stripe_info_block">' . $settings["stripe_connect_text"] . '</div>';
+
+                    require_once 'classes/lib/oauth/OAuth2Exception.php';
+                    require_once 'classes/lib/oauth/OAuth2Client.php';
+                    require_once 'classes/lib/StripeOAuth.class.php';
+
+                    // redirect to proper application OAuth url
+                    $oauth = ( new StripeOAuth($client_id, $secret_key) );
+                    $url = $oauth->getAuthorizeUri();
+                    ?>
+                        </br><a class="clear" href="<?php echo $url; ?>" target="_TOP">
+                            <img src="<?php echo get_stylesheet_directory_uri(); ?>/assets/images/blue.png" width="190" height="33" data-hires="true">
+                        </a>
+                        <?php
+                    } else {
+                        echo '<div class="wcv_stripe_info_block">' . $settings["stripe_disconnect_text"] . '</div>';
+                        echo '<br/>';
+                        echo '<a href="?disconnect_stripe_connect=true">' . __('Click here to disconnect your Stripe account.', 'wcv_stripe_connect') . '</a>';
+                    }
+                    ?></div><?php
+                break;
+            }
+        }
+    }
+    /* if (in_array('leadership_standard_role', (array) $user->roles) || in_array('leadership_basic_role', (array) $user->roles) || in_array('organization_basic_role', (array) $user->roles) || in_array('organization_standard_role', (array) $user->roles) || in_array('organization_enterprise_role', (array) $user->roles) || in_array('organization_premium_role', (array) $user->roles)) {
+      $publishable_key = $settings['testmode'] == 'yes' ? $settings['test_publishable_key'] : $settings['publishable_key'];
+      $client_id = $settings['testmode'] == 'yes' ? $settings['client_test_id'] : $settings['client_live_id'];
+      $secret_key = $settings['testmode'] == 'yes' ? $settings['test_secret_key'] : $settings['secret_key'];
+      ?><div class="wcv_stripe_connect_container bp-widget profile-page"><h3 class="screen-heading profile-group-title profile-group-title_strip_connect"><?php _e('Connect with Stripe', 'buddypress'); ?></h3>
+      <?php
+      $key = get_user_meta(get_current_user_id(), '_stripe_connect_access_key', true);
+      if (empty($key)) {
+      echo '<div class="wcv_stripe_info_block">';
+      echo 'In order to accept card payments, you need to register or sign in to Stripe. This is a secure payment gateway that we use to handle all online transactions. For further information follow the following link: <a target="_blank" href="https://stripe.com/about">https://stripe.com/about</a>';
+      echo '</div>';
+
+      require_once 'classes/lib/oauth/OAuth2Exception.php';
+      require_once 'classes/lib/oauth/OAuth2Client.php';
+      require_once 'classes/lib/StripeOAuth.class.php';
+
+      // redirect to proper application OAuth url
+      $oauth = ( new StripeOAuth($client_id, $secret_key) );
+      $url = $oauth->getAuthorizeUri();
+      ?>
+      </br><a class="clear" href="<?php echo $url; ?>" target="_TOP">
+      <img src="<?php echo get_stylesheet_directory_uri(); ?>/assets/images/blue.png" width="190" height="33" data-hires="true">
+      </a>
+      <?php
+      } else {
+      echo '<div class="wcv_stripe_info_block">';
+      echo 'Your account is currently connected with Stripe, please <a target="_blank" href="https://dashboard.stripe.com/login">click here</a> to view your Stripe dashboard.';
+      echo '</div>';
+      echo '<br/>';
+      echo '<a href="?disconnect_stripe_connect=true">' . __('Click here to disconnect your Stripe account.', 'wcv_stripe_connect') . '</a>';
+      }
+      ?></div><?php
+      } */
+}
+
+function woocommerce_stripe_connect_user_checkout() {
+    $settings = get_option('woocommerce_stripe_settings');
+    $user = wp_get_current_user();
+    if (!$settings) {
+        return;
+    }
+    $user_id = get_current_user_id();
+    $memberships = wc_memberships_get_user_active_memberships($user_id);
+    $arr = ["leadership-standard-plan", "leadership-basic-plan", "organization-premium-membership", "organization-basic-membership", "organization-standard-membership", "organization-enterprise-membership-copy-2"];
+    if (!empty($memberships)) {
+        foreach ($memberships as $key => $m) {
+            if (in_array($m->plan->slug, $arr)) {
+                $publishable_key = $settings['testmode'] == 'yes' ? $settings['test_publishable_key'] : $settings['publishable_key'];
+                $client_id = $settings['testmode'] == 'yes' ? $settings['client_test_id'] : $settings['client_live_id'];
+                $secret_key = $settings['testmode'] == 'yes' ? $settings['test_secret_key'] : $settings['secret_key'];
+                ?>
+                <div class="wcv_stripe_connect_container"><h3 class="screen-heading profile-group-title profile-group-title_strip_connect"><?php _e('Connect with Stripe', 'buddypress'); ?></h3>
+                    <?php
+                    $key = get_user_meta(get_current_user_id(), '_stripe_connect_access_key', true);
+                    echo '<div class="wcv_stripe_info_block">' . $settings["stripe_connect_text"] . '</div>';
+
+                    if (empty($key)) {
+                        require_once 'classes/lib/oauth/OAuth2Exception.php';
+                        require_once 'classes/lib/oauth/OAuth2Client.php';
+                        require_once 'classes/lib/StripeOAuth.class.php';
+
+                        // redirect to proper application OAuth url
+                        $oauth = ( new StripeOAuth($client_id, $secret_key) );
+                        $url = $oauth->getAuthorizeUri();
+                        ?><a class="clear" href="<?php echo $url; ?>" target="_TOP">
+                            <img src="<?php echo get_stylesheet_directory_uri(); ?>/assets/images/blue.png" width="190" height="33" data-hires="true">
+                        </a>
+                        <?php
+                    }
+                    ?></div><?php
+                break;
+            }
+        }
+    }
+}
+
+function stripe_check_connect() {
+    global $woocommerce;
+    if (is_user_logged_in()) {
+        $user = wp_get_current_user();
+        $user_id = get_current_user_id();
+        $memberships = wc_memberships_get_user_active_memberships($user_id);
+        $arr = ["leadership-standard-plan", "leadership-basic-plan", "organization-premium-membership", "organization-basic-membership", "organization-standard-membership", "organization-enterprise-membership-copy-2"];
+        if (!empty($memberships)) {
+            foreach ($memberships as $key => $m) {
+                if (in_array($m->plan->slug, $arr)) {
+                    if (!empty($_GET['disconnect_stripe_connect'])) {
+                        update_user_meta(get_current_user_id(), '_stripe_connect_access_key', '');
+                        wc_add_notice(__('Success! Your account has been disconnected with Stripe.', 'wcv_stripe_connect'), 'success');
+                        $url = '/members/' . $user->data->user_login . '/profile';
+                        wp_redirect($url);
+                        exit;
+                    }
+
+                    if (isset($_GET['scope']) && !empty($_GET['scope']) && isset($_GET['code']) && !empty($_GET['code'])) {
+                        $settings = get_option('woocommerce_stripe_settings');
+                        $publishable_key = $settings['testmode'] == 'yes' ? $settings['test_publishable_key'] : $settings['publishable_key'];
+                        $client_id = $settings['testmode'] == 'yes' ? $settings['client_test_id'] : $settings['client_live_id'];
+                        $secret_key = $settings['testmode'] == 'yes' ? $settings['test_secret_key'] : $settings['secret_key'];
+
+                        // $client_id = "ca_J3qLx9m3I8R8BxBQKJY4qwpA5ejh1xfg";
+                        require_once 'classes/lib/oauth/OAuth2Exception.php';
+                        require_once 'classes/lib/oauth/OAuth2Client.php';
+                        require_once 'classes/lib/StripeOAuth.class.php';
+
+                        // from the callback, after a person has linked their Stripe account with your Stripe application
+                        try {
+                            // run your code here
+                            $oauth = ( new StripeOAuth($client_id, $secret_key) );
+                            $token = $oauth->getAccessToken($_GET['code']);
+                            $key = $oauth->getPublishableKey($_GET['code']);
+                            $stripe_user_id = $oauth->getUserId();
+                            if ($token != '' && $stripe_user_id != '') {
+                                update_user_meta(get_current_user_id(), '_stripe_connect_access_key', $token);
+                                update_user_meta(get_current_user_id(), '_stripe_connect_user_id', $stripe_user_id);
+                            }
+                            $url = '/members/' . $user->data->user_login . '/profile';
+                            wp_redirect($url);
+                            exit;
+                        } catch (Exception $e) {
+                            $e->getMessage();
+                        } catch (InvalidArgumentException $e) {
+                            echo $e->getMessage();
+                        }
+                    }
+                    break;
+                }
+            }
+        }
+    }
+}
+
+function add_order_number_start_setting($settings) {
+    $settings['client_test_id'] = array(
+        'title' => __('Test Client Id', 'woocommerce-gateway-stripe'),
+        'type' => 'text',
+        'description' => __('Get your API keys from your stripe account. Invalid values will be rejected. Only values starting with "pk_test_" will be saved.', 'woocommerce-gateway-stripe'),
+        'default' => '',
+        'desc_tip' => true,
+    );
+    $settings['client_live_id'] = array(
+        'title' => __('Live Client Id', 'woocommerce-gateway-stripe'),
+        'type' => 'text',
+        'description' => __('Get your API keys from your stripe account. Invalid values will be rejected. Only values starting with "pk_test_" will be saved.', 'woocommerce-gateway-stripe'),
+        'default' => '',
+        'desc_tip' => true,
+    );
+    $settings['stripe_connect_text'] = array(
+        'title' => __('Stripe Connect Text', 'woocommerce-gateway-stripe'),
+        'type' => 'text',
+        'default' => '',
+        'desc_tip' => true,
+    );
+    $settings['stripe_connect_text'] = array(
+        'title' => __('Stripe Connect Text', 'woocommerce-gateway-stripe'),
+        'type' => 'textarea',
+        'default' => '',
+        'desc_tip' => true,
+    );
+    $settings['stripe_disconnect_text'] = array(
+        'title' => __('Stripe Disconnect Text', 'woocommerce-gateway-stripe'),
+        'type' => 'textarea',
+        'default' => '',
+        'desc_tip' => true,
+    );
+    return $settings;
+}
+
+add_filter('wc_stripe_settings', 'add_order_number_start_setting');
+
+function profile_tab_google_analytics() {
+    global $bp;
+
+    bp_core_new_nav_item(array(
+        'name' => 'Google analytics',
+        'slug' => 'google-analytics',
+        'screen_function' => 'google_analytics',
+        'position' => 2,
+        'parent_url' => bp_loggedin_user_domain() . '/google-analytics/',
+        'parent_slug' => $bp->profile->slug,
+        'default_subnav_slug' => 'google-analytics'
+    ));
+}
+
+add_action('bp_setup_nav', 'profile_tab_google_analytics');
+
+function google_analytics() {
+
+    // Add title and content here - last is to call the members plugin.php template.
+    add_action('bp_template_title', 'google_analytics_title');
+    add_action('bp_template_content', 'google_analytics_content');
+    bp_core_load_template('buddypress/members/single/google-analytics');
+}
+
+function google_analytics_title() {
+    echo 'Google analytics';
+}
+
+function google_analytics_content() {
+    include(__DIR__ . "/buddypress/members/single/google-analytics.php");
+}
+
+function google_analytics_get_analytics() {
+    include_once( FRONTEND_ANALYTICS_PLUGIN_DIR . 'includes/class-frontend-analytics-api.php' );
+    $page = filter_input(INPUT_POST, 'page');
+    $page = esc_url_raw($page);
+    $filters = "ga:pagePath==" . $page;
+    $metrics = "ga:pageviews,ga:sessions";
+    $dimensions = 'ga:pagePath,ga:date';
+    $start_date = date('Y-m-d', strtotime('-30 days'));
+    $end_date = date('Y-m-d');
+    $sort = '';
+    $realtime = false;
+    $limit = false;
+    $gaApi = new Frontend_Analytics_API();
+
+    # Check if Google successfully logged in
+    if (!$gaApi->checkLogin()) {
+        echo json_encode(array('error' => __('Please check Google Analytics Settings', 'buddypress')));
+        return false;
+    }
+
+    $account = $gaApi->getSingleProfile();
+
+    $account = $account[0]['id'];
+
+    # Set the account to the one requested
+    $gaApi->setAccount($account);
+
+    $stats = array();
+    try {
+        $stats = $gaApi->getMetrics($metrics, $start_date, $end_date, $dimensions, $sort, $filters, $limit, $realtime);
+    } catch (Exception $e) {
+        print 'GA Summary Widget - there was a service error ' . $e->getCode() . ':' . $e->getMessage();
+    }
+
+    echo json_encode($stats);
+    exit;
+}
+
+add_action("wp_ajax_google_analytics_get_analytics", "google_analytics_get_analytics");
+add_action("wp_ajax_nopriv_google_analytics_get_analytics", "google_analytics_get_analytics");
+
+function google_analytics_get_analytics_users() {
+    include_once( FRONTEND_ANALYTICS_PLUGIN_DIR . 'includes/class-frontend-analytics-api.php' );
+    $page = filter_input(INPUT_POST, 'page');
+    $page = esc_url_raw($page);
+    $filters = "ga:pagePath==" . $page;
+    $metrics = "ga:sessions";
+    $dimensions = 'ga:deviceCategory';
+    $start_date = date('Y') . "-01-01";
+    $end_date = date('Y-m-d');
+    $sort = '';
+    $realtime = false;
+    $limit = false;
+    $gaApi = new Frontend_Analytics_API();
+
+    # Check if Google successfully logged in
+    if (!$gaApi->checkLogin()) {
+        echo json_encode(array('error' => __('Please check Google Analytics Settings', 'buddypress')));
+        return false;
+    }
+
+    $account = $gaApi->getSingleProfile();
+
+    $account = $account[0]['id'];
+
+    # Set the account to the one requested
+    $gaApi->setAccount($account);
+
+    $stats = array();
+    try {
+        $stats = $gaApi->getMetrics($metrics, $start_date, $end_date, $dimensions, $sort, $filters, $limit, $realtime);
+    } catch (Exception $e) {
+        print 'GA Summary Widget - there was a service error ' . $e->getCode() . ':' . $e->getMessage();
+    }
+
+    echo json_encode($stats);
+    exit;
+}
+
+add_action("wp_ajax_google_analytics_get_analytics_users", "google_analytics_get_analytics_users");
+add_action("wp_ajax_nopriv_google_analytics_get_analytics_users", "google_analytics_get_analytics_users");
+
+function google_analytics_get_analytics_usersType() {
+    include_once( FRONTEND_ANALYTICS_PLUGIN_DIR . 'includes/class-frontend-analytics-api.php' );
+    $page = filter_input(INPUT_POST, 'page');
+    $page = esc_url_raw($page);
+    $filters = "ga:pagePath==" . $page;
+    $metrics = "ga:sessions";
+    $dimensions = 'ga:userType';
+    $start_date = date('Y') . "-01-01";
+    $end_date = date('Y-m-d');
+    $sort = '';
+    $realtime = false;
+    $limit = false;
+    $gaApi = new Frontend_Analytics_API();
+
+    # Check if Google successfully logged in
+    if (!$gaApi->checkLogin()) {
+        echo json_encode(array('error' => __('Please check Google Analytics Settings', 'buddypress')));
+        return false;
+    }
+
+    $account = $gaApi->getSingleProfile();
+
+    $account = $account[0]['id'];
+
+    # Set the account to the one requested
+    $gaApi->setAccount($account);
+
+    $stats = array();
+    try {
+        $stats = $gaApi->getMetrics($metrics, $start_date, $end_date, $dimensions, $sort, $filters, $limit, $realtime);
+    } catch (Exception $e) {
+        print 'GA Summary Widget - there was a service error ' . $e->getCode() . ':' . $e->getMessage();
+    }
+
+    echo json_encode($stats);
+    exit;
+}
+
+add_action("wp_ajax_google_analytics_get_analytics_usersType", "google_analytics_get_analytics_usersType");
+add_action("wp_ajax_nopriv_google_analytics_get_analytics_usersType", "google_analytics_get_analytics_usersType");
+
+
+function google_analytics_get_analytics_topSearch() {
+    include_once( FRONTEND_ANALYTICS_PLUGIN_DIR . 'includes/class-frontend-analytics-api.php' );
+    $page = filter_input(INPUT_POST, 'page');
+    $page = esc_url_raw($page);
+    $filters = "";
+    $filters = "ga:pagePath=~" . $page;
+    $metrics = "ga:pageViews";
+    $dimensions = 'ga:pagePath';
+    $start_date = date('Y') . "-01-01";
+    $end_date = date('Y-m-d');
+    $sort = '';
+    $realtime = false;
+    $limit = false;
+    $gaApi = new Frontend_Analytics_API();
+
+    # Check if Google successfully logged in
+    if (!$gaApi->checkLogin()) {
+        echo json_encode(array('error' => __('Please check Google Analytics Settings', 'buddypress')));
+        return false;
+    }
+
+    $account = $gaApi->getSingleProfile();
+
+    $account = $account[0]['id'];
+
+    # Set the account to the one requested
+    $gaApi->setAccount($account);
+
+    $stats = array();
+    try {
+        $stats = $gaApi->getMetrics($metrics, $start_date, $end_date, $dimensions, $sort, $filters, $limit, $realtime);
+    } catch (Exception $e) {
+        print 'GA Summary Widget - there was a service error ' . $e->getCode() . ':' . $e->getMessage();
+    }
+
+    echo json_encode($stats);
+    exit;
+}
+
+add_action("wp_ajax_google_analytics_get_analytics_topSearch", "google_analytics_get_analytics_topSearch");
+add_action("wp_ajax_nopriv_google_analytics_get_analytics_topSearch", "google_analytics_get_analytics_topSearch");
+
+
+
+function google_analytics_get_analytics_sessionCounty() {
+    include_once( FRONTEND_ANALYTICS_PLUGIN_DIR . 'includes/class-frontend-analytics-api.php' );
+    $page = filter_input(INPUT_POST, 'page');
+    $page = esc_url_raw($page);
+    $filters = "ga:pagePath==" . $page;
+    $metrics = "ga:sessions";
+    $dimensions = 'ga:country';
+    $start_date = date('Y') . "-01-01";
+    $end_date = date('Y-m-d');
+    $sort = '';
+    $realtime = false;
+    $limit = false;
+    $gaApi = new Frontend_Analytics_API();
+
+    # Check if Google successfully logged in
+    if (!$gaApi->checkLogin()) {
+        echo json_encode(array('error' => __('Please check Google Analytics Settings', 'buddypress')));
+        return false;
+    }
+
+    $account = $gaApi->getSingleProfile();
+
+    $account = $account[0]['id'];
+
+    # Set the account to the one requested
+    $gaApi->setAccount($account);
+
+    $stats = array();
+    try {
+        $stats = $gaApi->getMetrics($metrics, $start_date, $end_date, $dimensions, $sort, $filters, $limit, $realtime);
+    } catch (Exception $e) {
+        print 'GA Summary Widget - there was a service error ' . $e->getCode() . ':' . $e->getMessage();
+    }
+
+    echo json_encode($stats);
+    exit;
+}
+
+add_action("wp_ajax_google_analytics_get_analytics_sessionCounty", "google_analytics_get_analytics_sessionCounty");
+add_action("wp_ajax_nopriv_google_analytics_get_analytics_sessionCounty", "google_analytics_get_analytics_sessionCounty");
+
+function google_analytics_get_analytics_realTime() {
+    include_once( FRONTEND_ANALYTICS_PLUGIN_DIR . 'includes/class-frontend-analytics-api.php' );
+    $page = filter_input(INPUT_POST, 'page');
+    $page = esc_url_raw($page);
+    $filters = "";// . $page;
+    $metrics = "rt:activeUsers";
+    $start_date = date('Y') . "-01-01";
+    $end_date = date('Y-m-d');
+    $sort = '';
+    $realtime = true;
+    $limit = false;
+    $gaApi = new Frontend_Analytics_API();
+
+    # Check if Google successfully logged in
+    if (!$gaApi->checkLogin()) {
+        echo json_encode(array('error' => __('Please check Google Analytics Settings', 'buddypress')));
+        return false;
+    }
+
+    $account = $gaApi->getSingleProfile();
+
+    $account = $account[0]['id'];
+
+    # Set the account to the one requested
+    $gaApi->setAccount($account);
+
+    $stats = array();
+    try {
+        $stats = $gaApi->getMetrics($metrics, $start_date, $end_date, $dimensions, $sort, $filters, $limit, $realtime);
+    } catch (Exception $e) {
+        print 'GA Summary Widget - there was a service error ' . $e->getCode() . ':' . $e->getMessage();
+    }
+
+    echo json_encode($stats);
+    exit;
+}
+
+add_action("wp_ajax_google_analytics_get_analytics_realTime", "google_analytics_get_analytics_realTime");
+add_action("wp_ajax_nopriv_google_analytics_get_analytics_realTime", "google_analytics_get_analytics_realTime");
+
+
+//GD Business Hours
+/**
+ * Set Business Hours to open as default.
+ */
+function gd_snippet_200118_business_hours_set_default( $html, $cf ) {
+	global $gd_post;
+if(is_front_page()){
+	if ( ! empty( $html ) && ! empty( $cf ) && ! empty( $gd_post ) && ! empty( $gd_post->post_status ) && $gd_post->post_status == 'auto-draft' ) {
+		$html = str_replace( '});</script>', '$("input#' . $cf['htmlvar_name'] . '_f_active_1").prop("checked", true).trigger("change");});</script>', $html );
+	}
+
+	return $html;
+}
+}
+add_filter( 'geodir_custom_field_input_business_hours', 'gd_snippet_200118_business_hours_set_default', 20, 2 );
+
+
+ function get_user_favorites_by_type(){
+if(!is_admin()){
+ $favs =   geodir_get_user_favourites( get_current_user_id());
+ $org_favs = 0; $leadership_favs = 0;
+ $user_favs = array();
+ if ($favs){
+ foreach($favs as $fav){
+     if(get_post_type($fav) === 'gd_place') $org_favs++;
+     elseif(get_post_type($fav) ==='gd_leadership') $leadership_favs++;
+ }
+ $user_favs['org'] = $org_favs;
+ $user_favs['leadership'] = $leadership_favs;
+ 
+} 
+}
+return $user_favs;
+ }
+// Add Shortcode
+function conditional_fav_shortcode( $atts ) {
+    ob_start();
+	// Attributes
+	$atts = shortcode_atts(
+		array(
+	    "user-roles" => "",
+        "limit-reached-text" =>"",
+        "upgrade-link" => "",
+        "text-align" =>"",
+		),
+		$atts
+	);
+    
+    global $current_user, $post; 
+    if($atts['upgrade-link']) $upgrade_link = '<a class="upgrade-link" href="'. $atts['upgrade-link'] .'">Upgrade!</a>';
+    $user_roles = explode(',', $atts['user-roles']);
+    $user_roles = array_reduce(
+      $user_roles, 
+   function ($carry, $kvp) {
+      list($key, $value)=explode(':', $kvp); 
+      $carry[trim($key)]=trim($value); 
+      return $carry;
+    }, []);
+    $current_user_roles = wp_get_current_user()->roles;
+    $current_user_likes = array();
+    foreach($current_user_roles as $current_user_role){
+        array_push($current_user_likes, $user_roles[$current_user_role]);
+    }
+	if(count($current_user_likes)>0){
+		$user_max_likes = max($current_user_likes);
+	}else{
+		$user_max_likes =0;
+	}		
+    if($atts['text-align']) $align = $atts['text-align'];
+    $user_favourites =  get_user_favorites_by_type(); 
+    //if($user_favourites) $total_user_favourites = count($user_favourites);
+    if(get_post_type(get_the_ID()) === 'gd_place')  $total_user_favourites = $user_favourites['org'];
+    elseif(get_post_type(get_the_ID()) === 'gd_leadership')  $total_user_favourites = $user_favourites['leadership'];
+    if($user_roles){
+                    if(!is_user_logged_in()){
+                        $content = '<p class="geodir_post_meta  gd-align-'. $align .'" style="float:'. $align .'"><a  href='. wp_login_url() .'">
+                        Login</a><span> to Favorite This</span></p>';
+                        echo $content;
+                    }
+                    elseif($total_user_favourites < $user_max_likes || in_array("unlimited",$current_user_likes) || in_array(get_the_ID(),geodir_get_user_favourites( get_current_user_id()))){
+                        
+                         echo do_shortcode("[gd_post_fav show='icon' icon='' icon_color_off='rgba(223,223,223,0.8)' icon_color_on='#ff0000' type='link' shadow='' color='' bg_color='' txt_color='' size='h5' alignment=$align position='ab-bottom-right' mt='' mr='1' mb='n1' ml='' list_hide='' list_hide_secondary='' ]");
+                         
+                    }else {
+                       
+                        $content = '<p class="geodir_post_meta gd-align-'. $align .'" style="float:'. $align .'"><span class=" bubble-badge ">'. $atts['limit-reached-text'] .'</span> '. $upgrade_link .'</p>';
+
+                        echo $content;
+                        
+                    }
+                
+        
+    }
+    
+    return ob_get_clean();
+}
+add_shortcode( 'conditional-fav', 'conditional_fav_shortcode' );
+
+
+ function console_log($output, $with_script_tags = true) {
+    $js_code = 'console.log(' . json_encode($output, JSON_HEX_TAG) . 
+');';
+    if ($with_script_tags) {
+        $js_code = '<script>' . $js_code . '</script>';
+    }
+    echo $js_code;
+} 
+//reviews (comments) restrictions
+add_filter( 'init', 'manage_reviews');
+
+function manage_reviews()
+{
+    if(!is_admin()){
+ global $current_user;
+ //user roles array, change roles and the number of reviews allowed here
+ $user_roles = array(
+    'members_free_role:5','member_standard_role:10','members_premium_role:unlimited','leadership_basic_role:25','leadership_standard_role:50','leadership_premium_role:unlimited','organization_basic_role:15','organization_standard_role:30','organization_premium_role:unlimited','organization_enterprise_role:unlimited'
+ );
+ $user_roles = array_reduce(
+    $user_roles, 
+ function ($carry, $kvp) {
+    list($key, $value)=explode(':', $kvp); 
+    $carry[trim($key)]=trim($value); 
+    return $carry;
+  }, []);
+  $current_user_roles = $current_user->roles;
+  $current_user_reviews = array();
+  foreach($current_user_roles as $current_user_role){
+      array_push($current_user_reviews, $user_roles[$current_user_role]);
+  }
+  if($current_user_reviews)
+  $user_max_reviews = max($current_user_reviews) ?: '0'; 
+  //set the arguments
+$args = array(
+    'post_type'      => 'gd_place',
+    'orderby' => 'date',
+    'user_id' => $current_user->ID,
+    'order' => 'DESC',
+    'date_query' => array(
+           array(
+           'after' => '30 days ago',
+             )
+          )
+       );
+// get the comments using the arguments
+$total_user_reviews = count(get_comments($args)) ?: 0;
+if($total_user_reviews){
+if(in_array("unlimited",$current_user_reviews)) return; 
+if ($total_user_reviews > $user_max_reviews )
+{ 
+ add_filter( 'comments_open', '__return_false' );
+} }
+    }
+}
+
+//count and compare activity posts for a user per wp user role
+function activity_restrictions()
+{
+ global $current_user;
+ //user roles array, change roles and the number of reviews allowed here
+ $user_roles = array(
+    'members_free_role:15','member_standard_role:30','members_premium_role:unlimited','leadership_basic_role:25','leadership_standard_role:50','leadership_premium_role:unlimited','organization_basic_role:30','organization_standard_role:60','organization_premium_role:unlimited','organization_enterprise_role:unlimited'
+ );
+ $user_roles = array_reduce(
+    $user_roles, 
+ function ($carry, $kvp) {
+    list($key, $value)=explode(':', $kvp); 
+    $carry[trim($key)]=trim($value); 
+    return $carry;
+  }, []);
+  $current_user_roles = $current_user->roles;
+  $current_user_activities = array();
+  foreach($current_user_roles as $current_user_role){
+      array_push($current_user_activities, $user_roles[$current_user_role]);
+  }
+  $user_max_activities = max($current_user_activities); 
+  $args = array( 
+    'filter' => array(
+  'user_id' => $current_user->ID,
+  'object' =>  'activity',
+  'action' => 'activity_update',
+    ),
+    'date_query' => array(
+      array(
+      'after' => '1 days ago',
+        )
+     )  ,
+    
+  'count_total' => true,
+  );
+  $total_user_activities = BP_Activity_Activity::get($args)['total'];
+  $activity_restrictions['posts_left'] = $user_max_activities - $total_user_activities; 
+  if(in_array("unlimited",$current_user_activities)) { $activity_restrictions['limit_reached'] = false; $activity_restrictions['posts_left'] = false; }
+  if ($user_max_activities && $total_user_activities >= $user_max_activities )
+  { 
+    $activity_restrictions['limit_reached'] = true;
+  }
+  else $activity_restrictions['limit_reached'] = false;
+
+  
+  return $activity_restrictions;
+}
+
+// define the bp_activity_before_save callback 
+function action_bp_activity_before_save( $array ) { 
+    if(!activity_restrictions()['limit_reached']){
+        return $array;
+    }
+    else die;
+}; 
+         
+// add the action 
+add_action( 'bp_activity_before_save', 'action_bp_activity_before_save', 10, 1 ); 
+
+
+// mobile app menu restrictions
+function restrict_mobile_app_menu_items($output = true,$menu){
+   $allowed_roles = array('leadership_basic_role','leadership_standard_role','leadership_premium_role','organization_basic_role','organization_standard_role','organization_premium_role','organization_enterprise_role');
+    $current_user = wp_get_current_user();
+    
+    if(!array_intersect($allowed_roles,$current_user->roles)){
+        $restricted_items_labels = array('Administrative Functions','Administrative View','My Profile Analytics','Edit Videos','Profile Dashboard','Commission Dashboard','Upload Video','Commission Payment & Store Setting','Post A Job','Add Calendar Event'); 
+      /*   switch ( $menu['object'] ) {
+			case "custom": */
+           if(in_array($menu['label'],$restricted_items_labels)){
+            $output = false;
+            return $output;
+            if($menu['hide']){
+                $output = false;
+                return $output;
+            }
+          /*   break; */
+           }
+
+           /*  } */
+      
+
+     } 
+}
+add_filter('bbapp_filter_app_menu_by_dependency','restrict_mobile_app_menu_items',10,2);
+
+// ELEMENTOR - DISABLE GOOGLE FONTS
+//  add_filter( 'elementor/frontend/print_google_fonts', '__return_false' );
+
+
+/* show user extra filed in admin */
+
+add_action( 'show_user_profile', 'crf_show_extra_profile_fields' );
+add_action( 'edit_user_profile', 'crf_show_extra_profile_fields' );
+ 
+function userMetaSave($userId) {
+    if (!current_user_can('edit_user', $userId)) {
+        return;
+    } 
+ 
+	update_user_meta( $userId, 'ir_profile_subtitle', $_REQUEST['ir_profile_subtitle']);
+}
+add_action('personal_options_update', 'userMetaSave');
+add_action('edit_user_profile_update', 'userMetaSave');
+
+function crf_show_extra_profile_fields( $current_user ) { 
+
+    $role_name	= $current_user->roles[0]; ?>
+
+	<h3><?php esc_html_e( 'User Extra Information', 'crf' ); ?></h3>
+	<?php 
+		$ir_profile_subtitle = get_user_meta( $current_user->ID, 'ir_profile_subtitle', true); 
+	?>
+	
+	<table class="form-table">
+		<tr>
+			<th>
+				<label for="phone">Sub Title</label><br>
+				<input type="text" id="ir_profile_subtitle" name="ir_profile_subtitle" value="<?php echo $ir_profile_subtitle; ?>" class="regular-text" />
+			</th>
+		</tr>
+	</table>
+<?php }
+
+
+// function that runs when shortcode is called
+function search_with_menu() {
+	ob_start();
+	?>
+	<section class="search_categotyDiv">
+		  <div class="container">
+		  <div class="row align-items-center">
+		   <div class="col-md-3 col-lg-2">
+		    <div class="search_categoryListing"> 
+			 <button class="search_categoryListing_btn btn-block">Categories</button>
+			 <div class="mobile_menu_custom">
+			  <div class="search_resultListing_wrapper menu-main-menumobile-container">
+			   
+			   <?php wp_nav_menu( array('menu' => 'Course Categories','menu_class'=>'nav navbar-nav mr-auto shortcode-coursecat') ); ?>	
+			  </div>
+			  </div>
+			</div>
+		    </div>
+			<div class="col-md-9 col-lg-10">
+				<div class="search_catField">
+					<form class="dgwt-wcas-search-form" role="search" action="" method="get">
+						<div class="dgwt-wcas-sf-wrapp">
+							<label class="screen-reader-text" for="dgwt-wcas-search-input-1">Products search</label>
+							<input id="dgwt-wcas-search-input-1" type="search" class="dgwt-wcas-search-input" name="s" value="" placeholder="Search for videos..." autocomplete="off">
+							<button type="submit" aria-label="Search" class="dgwt-wcas-search-submit">Search</button>
+							<input type="hidden" name="post_type" value="sfwd-courses">
+							<input type="hidden" name="dgwt_wcas" value="1">
+						</div>
+					</form>
+				</div> 
+			</div> 
+		  </div>
+		  </div>
+		</section>
+		<style>
+			.menu-course-categories-container {
+			   position: relative;
+			   border-top: 1px solid #d1d7dc;
+			   box-shadow: 0 2px 4px rgb(0 0 0 / 8%), 0 4px 12px rgb(0 0 0 / 8%);
+			   display: flex;
+			   flex-direction: row;
+			   align-items: center;
+			   justify-content: space-between;
+			   padding: 0 2.4rem;
+			}
+			.menu-course-categories-container ul.shortcode-coursecat {
+			   min-width: 100%;
+			   display: flex;
+			   align-items: center;
+			   flex-flow: row;
+			   overflow-y: hidden;
+			   list-style: none;
+			   margin: 0;
+			   padding: 0;
+			}
+			.menu-course-categories-container ul.shortcode-coursecat li {
+			   position: relative;
+			}
+
+			.menu-course-categories-container ul.shortcode-coursecat li a {
+			   padding: 0.8rem 1.6rem;
+			   color: #777;
+			   font-size: 16px;
+			   display: block;
+			}
+			button.search_categoryListing_btn {
+				background-color: #533980;
+			}
+			.search_catField button {
+				background-color: #ededed!important;
+				color: #122B46!important;
+			}
+
+			.search_catField button::before {
+				border-color: transparent #ededed transparent!important;
+			}
+			.search_resultListing_wrapper .menu-course-categories-container ul > li.menu-item-has-children > a > i{
+				position:absolute;right:15px;
+				top:50%;
+				transform:translateY(-50%);
+				color:#333;
+				font-size:15px;
+			}
+			@media screen and (min-width: 768px){
+				.search_categoryListing .search_resultListing_wrapper,
+				.back_first_label,
+				.back_top_label{
+					display:none;	
+				}
+				.search_categoryListing:hover .search_resultListing_wrapper{
+					display:block;	
+				}
+
+				.search_catField .form-group {
+					border-radius: 30px;
+					border: 2px solid #ccc;
+					padding: 5px 25px;
+					position: relative;
+					background-color: #fff;
+				}
+
+				.search_catField .form-group .searching_icon {
+					position: absolute;
+					left: 20px;
+					top: 55%;
+					transform: translateY(-50%);
+				}
+
+				.search_catField .form-group .searching_icon i {
+					font-size: 24px;
+				}
+
+				.search_catField .form-group input.form-control {
+					margin-left: 24px;
+					border: 0;
+					background-color: transparent;
+				}
+
+				.search_catField {
+					margin: 20px 0;
+				}
+
+				.search_resultListing_wrapper {
+					position: absolute;
+					background-color: #fff;
+					z-index: 999;
+					box-shadow:0 2px 4px rgb(0 0 0 / 8%), 0 4px 12px rgb(0 0 0 / 8%);
+				}
+				.search_resultListing_wrapper .menu-course-categories-container ul.shortcode-coursecat {
+					display: block;
+					border-left: none;
+				}
+
+				html body .search_resultListing_wrapper .menu-course-categories-container ul {
+					padding: 0;
+					margin: 0;
+					list-style: none;
+					min-width: 250px!important;
+					max-width: 250px;
+					border-left: 1px solid #d1d7dc;
+					border-top: 1px solid #d1d7dc;
+					 min-height: 40rem;
+				}
+
+				.search_resultListing_wrapper .menu-course-categories-container {
+					padding: 0;
+				}
+				
+				.search_categotyDiv .navbar-nav > li ul.sub-menu {
+					position: absolute;
+				}
+				.search_resultListing_wrapper .menu-course-categories-container ul > li.menu-item-has-children ul.sub-menu{
+					left: 100%;
+					top: -1px;
+					margin: 0;
+					width: auto;
+					background: #fff;
+					display: none;
+					bottom: 0;
+					border-right: 1px solid #d1d7dc;
+					border-bottom: 1px solid #d1d7dc;
+				}
+
+				.search_resultListing_wrapper .menu-course-categories-container ul > li.menu-item-has-children:hover > ul.sub-menu {
+					display: block!important;
+				}
+
+				.search_resultListing_wrapper .menu-course-categories-container ul.shortcode-coursecat li {
+					  position: static;
+					  padding: 0;
+					  margin: 0;
+					  list-style: none;
+					  background: #fff;
+				}
+
+				.search_resultListing_wrapper .menu-course-categories-container ul li a {
+					position: relative;
+					padding: 10px 24px!important;
+					color: #000!important;
+				}
+				.search_resultListing_wrapper .menu-course-categories-container ul li a:hover{
+					opacity:0.5;
+				}
+
+			}
+
+
+			@media only screen and (max-width: 767px){
+				.search_categoryListing {
+					margin-top: 20px;
+				}
+				.search_categotyDiv .menu-course-categories-container ul li .back_top_label a {
+					color: #007cfb!important;
+				}
+				.search_categotyDiv .menu-course-categories-container {
+					box-shadow: none;
+				}
+				.search_categotyDiv  .menu-main-menumobile-container {
+					 position: absolute;
+					 top: 0;
+					 left: 0;
+					 width: 100%;
+					 transition: -webkit-transform 300ms ease-in-out;
+					 transition: transform 300ms ease-in-out;
+					 transition: transform 300ms ease-in-out, 
+					-webkit-transform 300ms ease-in-out;
+					 -webkit-transform: translateX(0);
+					 transform: translateX(0);
+					 will-change: transform;
+				}
+
+				.search_categotyDiv .menu-main-menumobile-container ul{
+					max-width: 320px;
+					width: 100%;
+					position: relative;
+				}
+
+
+				.search_categotyDiv .menu-main-menumobile-container ul ul {
+					position: absolute;
+					top: 0;
+					left: 100%;
+					display: none;
+					z-index: 999;
+				}
+
+				.search_categotyDiv .menu-main-menumobile-container ul li a {
+					color: #000!important;
+					font-size: 15px!important;
+					padding: 9px 10px!important;
+					display: inherit!important;
+					border-bottom: 1px solid rgba(0,0,0,0.10)!important;
+				}
+
+				.search_categotyDiv div#MainNavbar {
+					overflow: visible;
+				}
+				.search_categotyDiv ul#menu-main-menumobile li {
+					position: static;
+					float: none;
+				}
+				.search_categotyDiv .mobile_menu_custom {
+					height: 100vh;
+					overflow: hidden;
+					box-sizing: border-box;
+					background: #fff;
+					transition: -webkit-transform 300ms ease-in-out;
+					transition: all 300ms ease-in-out;
+					transition: all 300ms ease-in-out, -webkit-transform 300ms ease-in-out;
+					-webkit-transform: translateX(0%);
+					transform: translateX(0);
+					will-change: transform;
+					z-index: 1000;
+				}
+				
+				.search_categotyDiv .navbar-collapse.collapse.in .mobile_menu_custom {
+					left: 0; 
+					transition: all 300ms ease-in-out;
+				}
+
+				
+				.banner__container div#myHeader nav.navbar div#mega-menu-wrap-main-menu{
+					  display:none;
+				}
+
+				.menu-main-menumobile-container ul li.menu-item-has-children a {
+					position: relative;
+				}
+				.banner__container .header .navbar-nav>li>a {
+					padding: 10px 20px;
+					font-size: 15px;
+				}
+				.banner__container .header .navbar-nav>li{
+					padding-right:0;
+				}
+				.header ul#menu-main-menumobile li.back_top_label a:after,
+				.header ul#menu-main-menumobile li.back_first_label a:after{
+					content:"\f104";
+					font-family:fontawesome;
+					left: 15px;
+					top: 5px;
+					position: absolute;
+					font-size: 19px;
+				}
+
+				.header ul#menu-main-menumobile li.back_top_label a,
+				.header ul#menu-main-menumobile li.back_first_label a{
+					display: block;
+					padding-left: 32px;
+				}
+
+				.menu-course-categories-container ul.shortcode-coursecat {
+					display: block;
+					overflow: visible;
+				}
+
+				.menu-course-categories-container {
+					padding: 0;
+				}
+				.menu-main-menumobile-container ul{
+					padding: 0;
+					margin: 0;
+					list-style: none;
+				}
+				.menu-course-categories-container ul.shortcode-coursecat li {
+					position: static;
+				}
+				.search_categoryListing .mobile_menu_custom {
+					margin-top: 10px;
+					overflow-y: auto;
+				}
+			}
+		</style>
+	<?php	
+	return ob_get_clean();
+} 
+// register shortcode
+add_shortcode('search_with_menu', 'search_with_menu');
+
+function search_without_menu() {
+	ob_start();
+	?>
+	<section class="search_categotyDiv">
+		  <div class="container">
+		  <div class="row align-items-center">
+			<div class="col-md-12 col-lg-12">
+				<div class="search_catField">
+					<form class="dgwt-wcas-search-form" role="search" action="" method="get">
+						<div class="dgwt-wcas-sf-wrapp">
+							<label class="screen-reader-text" for="dgwt-wcas-search-input-1">Products search</label>
+							<input id="dgwt-wcas-search-input-1" type="search" class="dgwt-wcas-search-input" name="s" value="" placeholder="Search for videos..." autocomplete="off">
+							<button type="submit" aria-label="Search" class="dgwt-wcas-search-submit">Search</button>
+							<input type="hidden" name="post_type" value="sfwd-courses">
+							<input type="hidden" name="dgwt_wcas" value="1">
+						</div>
+					</form>
+				</div> 
+			</div> 
+		  </div>
+		  </div>
+		</section>
+		<style>
+			button.search_categoryListing_btn {
+				background-color: #533980;
+			}
+			.search_catField button {
+				background-color: #ededed!important;
+				color: #122B46!important;
+			}
+
+			.search_catField button::before {
+				border-color: transparent #ededed transparent!important;
+			}
+			@media screen and (min-width: 768px){
+				.search_catField .form-group {
+					border-radius: 30px;
+					border: 2px solid #ccc;
+					padding: 5px 25px;
+					position: relative;
+					background-color: #fff;
+				}
+
+				.search_catField .form-group .searching_icon {
+					position: absolute;
+					left: 20px;
+					top: 55%;
+					transform: translateY(-50%);
+				}
+
+				.search_catField .form-group .searching_icon i {
+					font-size: 24px;
+				}
+
+				.search_catField .form-group input.form-control {
+					margin-left: 24px;
+					border: 0;
+					background-color: transparent;
+				}
+
+				.search_catField {
+					margin: 20px 0;
+				}
+			}
+		</style>
+	<?php	
+	return ob_get_clean();
+} 
+// register shortcode
+add_shortcode('search_without_menu', 'search_without_menu');
+
+/**
+ * Force loading of the Course Grid CSS assets.
+ */
+add_action( 'wp_enqueue_scripts', function() {
+
+	learndash_course_grid_load_resources();
+
+} );
+
+
+/*
+add_action( 'woocommerce_before_thankyou', 'success_message_after_payment' );
+function success_message_after_payment( $order_id ){
+    // Get the WC_Order Object
+    $order = wc_get_order( $order_id );
+
+    if ( $order->has_status('processing') ){
+        wc_print_notice( __("Your payment has been successful2121", "woocommerce"), "success" );
+    }
+} 
+*/
+
+// Set up Cutsom BP navigation
+function my_setup_nav() {
+      global $bp;
+
+      /*
+      bp_core_new_nav_item( array( 
+            'name' => __( 'HERE', 'buddypress' ), 
+            'slug' => 'my-item-one', 
+            'position' => 30,
+            'screen_function' => 'my_item_one_template', 
+      ) );
+      */
+ 
+      
+      // Change the order of menu items
+      $bp->bp_nav['messages']['position'] = 100;
+
+      // Remove a menu item
+      //$bp->bp_nav['activity'] = false;
+      $bp->bp_nav['google-analytics'] = false;
+      $bp->bp_nav['user-google-analytics'] = false;
+      $bp->bp_nav['analytics'] = false;
+
+      // Change name of menu item
+     //$bp->bp_nav['groups']['name'] = 'community';
+
+       //$bp->bp_nav['account']['name'] = 'My Account';
+        $bp->bp_nav['lists']['name'] = 'My Lists';
+        $bp->bp_nav['listings']['name'] = 'Internet Proﬁle';
+        $bp->bp_nav['videos']['name'] = 'My Timeline Videos';
+        $bp->bp_nav['profile']['name'] = 'My Profile'; 
+
+       // $bp->bp_nav['settings']['name'] = 'My Account';
+       // $bp->bp_nav['account']['name'] = 'My Account';
+
+        $bp->bp_nav['user-gdbuddypress-nav-listings']['name'] = 'Internet Proﬁle';
+        $bp->bp_nav['gdbuddypress-nav-listings']['name'] = 'Internet Proﬁle';
+        $bp->bp_nav['gdbuddypress-listings']['name'] = 'Internet Proﬁle';
+         
+} 
+ 
+add_action( 'bp_setup_nav', 'my_setup_nav' );  
+
+
+/*
+function my_setup_nav2() {
+    $bp_nouveau = bp_nouveau();
+   // $nav_item   = $bp_nouveau->current_nav_item;
+   // $link_text  = '';
+	echo '<pre>';
+	print_r($bp_nouveau->sorted_nav);
+	die();
+}	
+add_action( 'bp_nouveau_get_nav_link_text', 'my_setup_nav2' );  
+*/
+
+function bp_remove_nav_item() {
+    global $bp; 
+
+        bp_core_remove_nav_item( 'google-analytics' );
+ 
+    }
+
+    add_action( 'wp', 'bp_remove_nav_item' );
+
+ 
+
+
+add_action('bp_core_activated_user', 'bp_custom_registration_role',10 , 3);
+
+function bp_custom_registration_role($user_id, $key, $user) {
+   $userdata = array();
+   $userdata['ID'] = $user_id;
+
+   $MembershipType = xprofile_get_field_data('Membership Type', $user_id);
+
+   if($MembershipType == "1) Member - Regular Members Membership"){
+   //$userdata['role'] = 'members_free_role';
+  // $userdata['role'] = 'members_standard_role';
+   //$userdata['role'] = 'members_premium_role';
+
+   $bp_user = new WP_User( $user_id );
+ 
+   $bp_user->add_role('members_free_role');
+   $bp_user->add_role('members_standard_role');
+   $bp_user->add_role('members_premium_role');
+
+
+   } else if($MembershipType == "2) Organization - You Are A Religious Organization") {
+  // $userdata['role'] = 'organization_premium_role';
+  // $userdata['role'] = 'organization_enterprise_role';
+   //$userdata['role'] = 'organization_standard_role';
+   //$userdata['role'] = 'organization_basic_role'; 
+
+   $bp_user = new WP_User( $user_id );
+ 
+   $bp_user->add_role('organization_premium_role');
+   $bp_user->add_role('organization_enterprise_role');
+   $bp_user->add_role('organization_standard_role');
+   $bp_user->add_role('organization_basic_role');
+
+
+
+   } else {
+  // $userdata['role'] = "leadership_basic_role";
+   //$userdata['role'] = 'leadership_standard_role';
+   //$userdata['role'] = 'leadership_premium_role';
+
+
+
+   $bp_user = new WP_User( $user_id );
+ 
+   $bp_user->add_role('leadership_basic_role');
+   $bp_user->add_role('leadership_standard_role');
+   $bp_user->add_role('leadership_premium_role');
+
+  
+
+   // $MembershipType == "organization_standard_role";
+
+   } 
+
+    wp_update_user($userdata);
+
+   
+}
+
+
+
+function my_set_default_member_type( $user_id, $user_login, $user_password, $user_email, $usermeta ) {
+    // Set the member's type to student
+
+    $MembershipType = xprofile_get_field_data('Membership Type', $user_id);
+
+    if($MembershipType == "1) Member - Regular Members Membership"){
+
+    bp_set_member_type( $user_id, 'member' );
+
+} else if($MembershipType == "2) Organization - You Are A Religious Organization") {
+
+    bp_set_member_type( $user_id, 'organization' );
+
+   } else {
+
+    bp_set_member_type( $user_id, 'leadership122' );
+
+   } 
+    }
+
+    add_action( 'bp_core_signup_user', 'my_set_default_member_type', 10, 5 );
+
+    
+
+    
+   
+ add_filter( 'login_redirect', 'redirect_to_user_profile', 10, 3 );
+function redirect_to_user_profile( $redirect_to, $request, $user ) {
+
+$current_user = get_userdata($user->ID);
+
+$user_login=$current_user->user_login; 
+
+$str_user_url = str_replace('.', '-', $user_login);
+
+
+$redirect_to=site_url().'/members/'.$str_user_url.'/profile/edit'; 
+
+return $redirect_to;
+
+
+}
+
+// update_profile_type_when_user_login
+function update_profile_type_when_user_login() {
+
+
+	$current_user = wp_get_current_user();
+
+    $MembershipType = xprofile_get_field_data('Membership Type', $user_id);
+
+    if($MembershipType == "1) Member - Regular Members Membership"){
+
+    bp_set_member_type( $current_user->ID, 'member' );
+
+} else if($MembershipType == "2) Organization - You Are A Religious Organization") {
+
+    bp_set_member_type( $current_user->ID, 'organization' );
+
+   } else {
+
+    bp_set_member_type( $current_user->ID, 'leadership122' );
+
+   } 
+
+ 
+}
+
+add_action( 'template_redirect', 'update_profile_type_when_user_login' );
+
+
+
+
+function my_logged_in_redirect() {  
+ global $bp; 
+
+
+$user_id=get_current_user_id();
+
+$MembershipType = xprofile_get_field_data('Membership Type', $user_id);
+
+$members =site_url()."/new-sign-up-portal-member/";
+$organization =site_url()."/new-sign-up-portal-organization/";
+$leadership =site_url()."/new-sign-up-portal-leader/";
+
+
+if($MembershipType == "1) Member - Regular Members Membership"){
+   
+   $redir_url=$members;
+
+   } else if($MembershipType == "2) Organization - You Are A Religious Organization") {
+   $redir_url=$organization;
+
+
+   } else {
+   $redir_url=$leadership; 
+
+   }  
+
+$current_user = wp_get_current_user();
+
+$user_login=$current_user->user_login; 
+
+$profile_link=site_url().'/members/'.$user_login.'/profile/edit';
+
+  
+?>  
+ 
+<script type="text/javascript">
+     
+   var redir_url =" "; 
+
+   var profile_link="<?php echo $profile_link; ?>"; 
+
+   console.log(profile_link); 
+ 
+
+   console.log(redir_url);
+ 
+
+    //window.location.href = organization;
+  
+</script>  
+
+ 
+<?php 
+}
+
+
+
+
+
+
+
+ 
+/*
+   function using_mt_register_member_types() {
+	bp_register_member_type( 'operator', array(
+		'labels' => array(
+			'name'          => __( 'Operators', 'using-mt' ),
+			'singular_name' => __( 'Operator', 'using-mt' ),
+		),
+	) );
+
+	bp_register_member_type( 'vendor', array(
+		'labels' => array(
+			'name'          => __( 'Vendors', 'using-mt' ),
+			'singular_name' => __( 'Vendor', 'using-mt' ),
+		),
+	) );
+
+	bp_register_member_type( 'coach', array(
+		'labels' => array(
+			'name'          => __( 'Coaches', 'using-mt' ),
+			'singular_name' => __( 'Coach', 'using-mt' ),
+		),
+	) );
+}
+add_action( 'bp_init', 'using_mt_register_member_types' );
+
+function using_mt_count_member_types( $member_type = '', $taxonomy = 'bp_member_type' ) {
+	global $wpdb;
+	$member_types = bp_get_member_types();
+
+	if ( empty( $member_type ) || empty( $member_types[ $member_type ] ) ) {
+		return false;
+	}
+
+	$count_types = wp_cache_get( 'using_mt_count_member_types', 'using_mt_bp_member_type' );
+
+	if ( ! $count_types ) {
+		if ( ! bp_is_root_blog() ) {
+			switch_to_blog( bp_get_root_blog_id() );
+		}
+
+		$sql = array(
+			'select' => "SELECT t.slug, tt.count FROM {$wpdb->term_taxonomy} tt LEFT JOIN {$wpdb->terms} t",
+			'on'     => 'ON tt.term_id = t.term_id',
+			'where'  => $wpdb->prepare( 'WHERE tt.taxonomy = %s', $taxonomy ),
+		);
+
+		$count_types = $wpdb->get_results( join( ' ', $sql ) );
+		wp_cache_set( 'using_mt_count_member_types', $count_types, 'using_mt_bp_member_type' );
+
+		restore_current_blog();
+	}
+
+	$type_count = wp_filter_object_list( $count_types, array( 'slug' => $member_type ), 'and', 'count' );
+	$type_count = array_values( $type_count );
+
+	if ( empty( $type_count ) ) {
+		return 0;
+	}
+
+	return (int) $type_count[0];
+}
+
+function using_mt_display_directory_tabs() {
+	$member_types = bp_get_member_types( array(), 'objects' );
+
+	// Loop in member types to build the tabs
+	foreach ( $member_types as $member_type ) : ?>
+
+	<li id="members-<?php echo esc_attr( $member_type->name ) ;?>">
+		<a href="<?php bp_members_directory_permalink(); ?>"><?php printf( '%s <span>%d</span>', $member_type->labels['name'], using_mt_count_member_types( $member_type->name ) ); ?></a>
+	</li>
+
+	<?php endforeach;
+}
+add_action( 'bp_members_directory_member_types', 'using_mt_display_directory_tabs' );
+*/
+
+
+ ?>

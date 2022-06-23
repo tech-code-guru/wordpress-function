@@ -1,0 +1,573 @@
+<?php
+
+get_header(); ?>
+
+<?php //print_r($_SESSION);?>
+
+
+<!-- if_add_diamond -->
+<?php
+$add_diamond_product =$_COOKIE['add_diamond_product'];
+$add_ring_product =$_COOKIE['add_ring_product'];
+
+$diamond_product = wc_get_product($add_diamond_product);
+$ring_product = wc_get_product($add_ring_product);
+
+if($add_ring_product && $add_diamond_product): 
+    $count_ring_price =$ring_product->get_price() + $diamond_product->get_price(); 
+
+
+endif;
+
+
+$diamond_search_page=99;
+$rings_filter_page=393;
+
+if ($add_diamond_product && is_page($diamond_search_page)) {
+
+     $secclass='active';
+
+}  else if($add_diamond_product) {
+
+    $secclass='active';
+
+}else {
+
+    $secclass='active';
+}   
+
+ 
+if ($add_ring_product && $add_diamond_product) {
+     $classname='active';
+}  else {
+     $classname='inactive';
+}   
+  
+?>
+
+<div class="diamond_searchPage"> 
+ <div class="container">
+  <div class="row">
+    <div class="col-md-12"> 
+        <div class="d-flex justify-content-between mb-5">
+            <div class="diamond--step-inner diam_01">
+            <?php if($add_diamond_product): ?>
+                   <div  class="diamond-step-content">
+                    <div class="d-flex align-items-center">
+                        <div class="diamond-number">1</div>
+                        <div class="diamond-title-wrap44">
+                            <div class="diamond-title-bottom" >Diamond</div>
+                            <span><i class="fa fa-check"></i> <a href="<?= get_permalink($add_diamond_product); ?>" class="change_view viewed-01">View</a> |
+                            <a href="<?php echo site_url(); ?>/diamond-search/" class="change_view">Change </a></span>
+                        </div>
+                    </div>  
+                    <div class="diamond__image-01"><a href="<?= get_permalink($add_diamond_product); ?>"><div class="diamond_img"><img src="<?= get_stylesheet_directory_uri(); ?>/assets/images/diamond.png" class="diamond_icon"></div><?php echo  $diamond_product->get_price_html(); ?></a>  
+                    </div>    
+                </div>  
+                 
+            <?php else: ?>   
+                <a href="#" class="diamond-step-content <?= $secclass; ?>">
+                    <div class="d-flex align-items-center">
+                        <div class="diamond-number">1</div>
+                        <div class="diamond-title-wrap">
+                            <div class="diamond-title-top">Choose<span class="hidden-xs"> Your</span></div>
+                            <div class="diamond-title-bottom" >Diamond</div>
+                        </div>
+                    </div> 
+                    <div class="diamond__image-01"><div class="diamond_img"><img src="<?= get_stylesheet_directory_uri(); ?>/assets/images/diamond.png" class="diamond_icon"></div></div> 
+                </a>
+            <?php endif; ?>   
+            </div>   
+            <div class="diamond--step-inner diam_02"> 
+                <?php if($add_ring_product): ?> 
+                    <div class="diamond-step-content">
+                    <div class="d-flex align-items-center">
+                        <div class="diamond-number">2</div>
+                        <div class="diamond-title-wrap44">
+                            <div class="diamond-title-bottom" >Setting</div>
+                            <span><i class="fa fa-check"></i> <a href="<?= get_permalink($add_ring_product); ?>" class="change_view viewed-01">View </a> |
+                            <a href="<?php echo site_url(); ?>/rings-filter" class="change_view">Change </a></span>
+                        </div>
+                    </div>   
+                    <div class="diamond__image-01"><a href="<?= get_permalink($add_diamond_product); ?>"><div class="diamond_img"><img src="<?= get_stylesheet_directory_uri(); ?>/assets/images/ring.png" class="diamond_icon"></div><?php echo  $ring_product->get_price_html(); ?></a>  
+                    </div>   
+                </div>     
+  
+                <?php else: ?>  
+                <a href="<?php echo site_url(); ?>/rings-filter" class="diamond-step-content">
+                    <div class="d-flex align-items-center">
+                        <div class="diamond-number">2</div>
+                        <div class="diamond-title-wrap">
+                            <div class="diamond-title-top">Choose<span class="hidden-xs"> Your</span></div>
+                            <div class="diamond-title-bottom" >Setting</div>
+                        </div>
+                    </div>
+                    <div class="diamond__image-01"><div class="diamond_img"><img src="<?= get_stylesheet_directory_uri(); ?>/assets/images/ring.png" class="diamond_icon"></div></div>
+                </a>   
+                 
+                <?php endif; ?> 
+ 
+            </div> 
+
+                <div class="diamond--step-inner diam_03 <?= $classname; ?>">
+                         <?php if($add_ring_product && $add_diamond_product): ?> 
+                            <a href="<?php echo site_url(); ?>/completed-ring/" class="diamond-step-content <?= $classname; ?>">
+                                <div class="d-flex align-items-center">
+                                    <div class="diamond-number">3</div>
+                                    <div class="diamond-title-wrap">
+                                        <div class="diamond-title-bottom" >Your Ring</div>
+                                        <span class="diamond-price"> Total Price : $ <?= $count_ring_price; ?> </span>
+                                    </div>
+                                </div>   
+                                <div class="diamond__image-01"><div class="diamond_img"><img src="<?= get_stylesheet_directory_uri(); ?>/assets/images/diamond-ring.png" class="diamond_icon"></div></div>
+                            </a>    
+                    <?php else: ?>  
+                            <a href="#" class="diamond-step-content <?= $classname; ?>">
+                                <div class="d-flex align-items-center">
+                                    <div class="diamond-number">3</div>
+                                    <div class="diamond-title-wrap">
+                                        <div class="diamond-title-top">Review</div>
+                                        <div class="diamond-title-bottom" >Your Ring</div>
+                                    </div>
+                                </div>   
+                                <div class="diamond__image-01"><div class="diamond_img"><img src="<?= get_stylesheet_directory_uri(); ?>/assets/images/diamond-ring.png" class="diamond_icon"></div></div>
+                            </a> 
+                    <?php endif; ?>       
+                </div>  
+        </div> 
+    </div>
+   <div class="col-md-4 px-2"> 
+    <?php
+    //print_r($_SESSION);
+    $diamonds_list = get_terms( 'diamonds', array(
+        'hide_empty' => false,
+    ) );
+ 
+    echo '<h3 class="text-center mb-3">Shape</h3> <ul class="main_div main_divFilter">';
+        foreach ($diamonds_list as $list => $value) {
+            $term_id=$value->term_id;
+            $term_vals = get_term_meta($term_id);
+            $image_id=$term_vals['image'][0];
+            $image = get_field('tax_image', 'diamonds' . '_' . $term_id);
+            echo '<li data-name="'.$value->name.'" data-id="'.$term_id.'"><img title="'.$value->name.'" src="'.$image.'" class="img_url">';
+            echo '<h5 class="diamond_title">'.$value->name.'</h5>';
+            echo '</li>';
+        }
+    echo '</ul>'; 
+    ?> 
+            <div class="filter_props w-100">
+                <p class=" form-field product_certification_field">
+                    <h3 for="product_certification" class="mb-4">Certification</h3>
+                    <ul class="certification_ul">
+                        <li data-value="GTA">GIA</li>
+                        <li data-value="AGS">AGS</li>
+                        <li data-value="EGL">EGL</li>
+                        <li data-value="IGI">IGI</li>
+                        <li data-value="HRD">HRD</li>
+                    </ul>
+                </p>
+            </div>
+            </div>
+          <div class="col-md-8 px-2">
+            <div class="filter_props carat_filter">
+                <h3>Carat</h3>
+                <div class="inputs">
+                  <input type="number" id="min_carat" min="0.15" max="12" value="0.15" style="border:0; color:#f6931f; font-weight:bold;">
+                  <input type="number" id="max_carat" min="0.15" max="12" value="10" style="border:0; color:#f6931f; font-weight:bold;">
+               </div>
+                 <div id="slider-range"></div>
+            </div>
+
+             <div class="filter_props cut--ranges">
+                <h3>Cut</h3>
+                <div class="inputs">
+                  <input type="hidden" id="cut_min" min="0" max="4" value="0" style="border:0; color:#f6931f; font-weight:bold;">           
+                  <input type="hidden" id="cut_max" min="0" max="4" value="4" style="border:0; color:#f6931f; font-weight:bold;">
+                </div>
+                 <div id="cut-range"></div>
+                 <ul> 
+                    <li data-id="0">Good</li>
+                    <li data-id="1">Very Good</li>
+                    <li data-id="2">Excellent</li>
+                    <li data-id="3">Ideal</li>
+                    <li data-id="4">Super Ideal</li>
+                 </ul>
+            </div>
+             <div class="filter_props color--ranges">
+                <h3>Color</h3>
+                <div class="inputs">
+                  <input type="hidden" id="color_min" min="0" max="9" value="0" style="border:0; color:#f6931f; font-weight:bold;">           
+                  <input type="hidden" id="color_max" min="0" max="9" value="4" style="border:0; color:#f6931f; font-weight:bold;">
+                </div>
+                 <div id="color-range"></div>
+                 <ul> 
+                    <li data-id="0">M</li>
+                    <li data-id="1">L</li>
+                    <li data-id="2">K</li>
+                    <li data-id="3">J</li>
+                    <li data-id="4">I</li>
+                    <li data-id="5">H</li>
+                    <li data-id="6">G</li>
+                    <li data-id="7">F</li>
+                    <li data-id="8">E</li>
+                    <li data-id="9">D</li>
+                 </ul>
+            </div>
+               <div class="filter_props clarity--ranges">
+                <h3>Clarity</h3>
+                <div class="inputs">
+                  <input type="hidden" id="clarity_min" min="0" max="9" value="0" style="border:0; color:#f6931f; font-weight:bold;">           
+                  <input type="hidden" id="clarity_max" min="0" max="9" value="4" style="border:0; color:#f6931f; font-weight:bold;">
+                </div>
+                 <div id="clarity-range"></div>
+                 <ul> 
+                    <li data-id="0">I1</li>
+                    <li data-id="1">SI3</li>
+                    <li data-id="2">SI2</li>
+                    <li data-id="3">SI1</li>
+                    <li data-id="4">VS2</li>
+                    <li data-id="5">VS1</li>
+                    <li data-id="6">VVS2</li>
+                    <li data-id="7">VVS1</li>
+                    <li data-id="8">IF</li>
+                    <li data-id="9">FL</li>
+                 </ul>
+            </div>
+        </div>
+        </div>
+    <div class="main_advance_filter">
+       
+                  <div class="filter_wrap d-lg-flex">      
+                      <div class="title_wrap">
+                        <span>Advance Filters</span>
+                        <span class="advanced-plus"><i>+</i></span>
+                        </div>
+                          <div class="tabContent_wrap">
+                            <div class="tabs_custom ml-3">
+                                  <button class="tablinks" data-id="price">Price</button>
+                                  <button class="tablinks" data-id="polish">Polish</button>
+                                  <button class="tablinks" data-id="symmetry">Symmetry</button>
+                                  <button class="tablinks" data-id="depth">Depth</button>
+                                  <button class="tablinks" data-id="table_filter">Table</button>
+                                  <button class="tablinks" data-id="fluorescence">Fluorescence</button>
+                            </div>
+                              <div id="price" class="tabcontent">
+                         <h4 class="advanceFilter_title">Price</h4>
+                        <div class="inputs">
+                          <input type="text" id="price_min" value="$" style="border:0; color:#f6931f; font-weight:bold;">
+                          <input type="text" id="price_max" value="$" style="border:0; color:#f6931f; font-weight:bold;">
+                       </div>
+                       <div id="price-range"></div>
+                    </div>
+
+                    <div id="polish" class="tabcontent">
+                      <h4 class="advanceFilter_title">Polish</h4>
+                      <div id="polish-range"></div>
+                      <ul> 
+                        <li data-id="0">
+                            <input id="polish_fair" class="polish_inputs" type="checkbox" name="polish[]" value="0">
+                            <label for="polish_fair">Fair</label>
+                        </li>
+                        <li data-id="1">
+                            <input id="polish_good" class="polish_inputs" type="checkbox" name="polish[]" value="1">
+                            <label for="polish_good">Good</label>
+                        </li>
+                        <li data-id="2">
+                            <input id="polish_vg" class="polish_inputs" type="checkbox" name="polish[]" value="2">
+                            <label for="polish_vg">Very Good</label>
+                        </li>
+                        <li data-id="3">
+                            <input id="polish_ie" class="polish_inputs" type="checkbox" name="polish[]" value="3">
+                            <label for="polish_ie">Ideal/Excellent</label>
+                        </li>
+                    </ul>
+                    </div>
+
+                    <div id="symmetry" class="tabcontent">
+                       <h4 class="advanceFilter_title">Symmetry</h4>
+                      <ul> 
+                        <li data-id="0">
+                            <input id="symmetry_fair" class="symmetry_inputs" type="checkbox" name="symmetry[]" value="0">
+                            <label for="symmetry_fair">Fair</label>
+                        </li>
+                        <li data-id="1">
+                            <input id="symmetry_good" class="symmetry_inputs" type="checkbox" name="symmetry[]" value="1">
+                            <label for="symmetry_good">Good</label>
+                        </li>
+                        <li data-id="2">
+                            <input id="symmetry_vg" class="symmetry_inputs" type="checkbox" name="symmetry[]" value="2">
+                            <label for="symmetry_vg">Very Good</label>
+                        </li>
+                        <li data-id="3">
+                            <input id="symmetry_ie" class="symmetry_inputs" type="checkbox" name="symmetry[]" value="3">
+                            <label for="symmetry_ie">Ideal/Excellent</label>
+                        </li>
+                    </ul>
+                    </div> 
+                    <div id="depth" class="tabcontent">
+                          <h4 class="advanceFilter_title">Depth</h4>
+                        <div class="inputs">
+                          <input type="text" id="depth_min" value="0%" style="border:0; color:#f6931f; font-weight:bold;">
+                          <input type="text" id="depth_max" value="100%" style="border:0; color:#f6931f; font-weight:bold;">
+                       </div>
+
+                       <div id="depth-range"></div>
+                    </div> 
+                    <div id="table_filter" class="tabcontent">
+                        <h4 class="advanceFilter_title">Table</h4>
+                        <div class="inputs">
+                          <input type="text" id="table_min" value="0%" style="border:0; color:#f6931f; font-weight:bold;">
+                          <input type="text" id="table_max" value="93%" style="border:0; color:#f6931f; font-weight:bold;">
+                       </div>
+
+                       <div id="table-range"></div>
+                    </div> 
+                        <div id="fluorescence" class="tabcontent">
+                            <h4 class="advanceFilter_title">Fluorescence</h4>
+                               <ul> 
+                                <li data-id="0">
+                                    <input id="fluorescence_fair" class="fluorescence_inputs" type="checkbox" name="fluorescence[]" value="0">
+                                    <label for="fluorescence_fair">Fair</label>
+                                </li>
+                                <li data-id="1">
+                                    <input id="fluorescence_good" class="fluorescence_inputs" type="checkbox" name="fluorescence[]" value="1">
+                                    <label for="fluorescence_good">Good</label>
+                                </li>
+                                <li data-id="2">
+                                    <input id="fluorescence_vg" class="fluorescence_inputs" type="checkbox" name="fluorescence[]" value="2">
+                                    <label for="fluorescence_vg">Very Good</label>
+                                </li>
+                                <li data-id="3">
+                                    <input id="fluorescence_ie" class="fluorescence_inputs" type="checkbox" name="fluorescence[]" value="3">
+                                    <label for="fluorescence_ie">Ideal/Excellent</label>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                 </div>
+        </div>
+        <hr>
+      
+         
+            <?php //echo do_shortcode("[recently_viewed_products per_page='5']");?>
+   <?php 
+    $compare_product = ! empty( $_COOKIE['compare_product_list'] ) ? (array) explode( '|', $_COOKIE['compare_product_list'] ) : array();
+    $compare_product = array_filter( array_map( 'absint', $compare_product ) );
+    $compare_product_count=count($compare_product);
+
+    $view_product = ! empty( $_COOKIE['woocommerce_recently_viewed'] ) ? (array) explode( '|', $_COOKIE['woocommerce_recently_viewed'] ) : array();
+    $view_product = array_filter( array_map( 'absint', $view_product ) );
+    $view_product_count=count($view_product);
+
+    ?>
+
+        <section class="viewProduct_Section listing_products my-5">
+    <div class="container">
+
+<?php 
+              $postsPerPage = 6;
+
+        $args = array( 
+            'post_type' => 'product',
+            'posts_per_page' => $postsPerPage,
+            'tax_query' => array(
+              array(
+                  'taxonomy' => 'product_cat',
+                  'field' => 'term_id',
+                  'terms' => array(41), /*category name*/
+                  )
+           ),
+       );  
+
+            $meta_query = new WP_Query($args); ?>
+             <?php  
+             $i=1;
+             if ( $meta_query->have_posts() ) : 
+
+            //$all_pro_count=$meta_query->post_count;  
+            $count_product = wp_count_posts( 'product' );
+             $all_pro_count=$count_posts->publish;
+
+                    ?>
+        <div class="et_pb_module et_pb_tabs">
+        <ul class="et_pb_tabs_controls clearfix">
+<li class="diamonds_list et_pb_tab_active"><a href="#" class="display_diamonds_count">Diamonds(<?= do_shortcode('[product_count]'); ?>)</a></li>
+            <li class="recently_view_list"><a href="#">Recently Viewed(<?= $view_product_count; ?>)</a></li>
+            <li class="compare_list"><a href="#">Compare(<?= $compare_product_count; ?>)</a></li>
+        </ul>
+        <div class="et_pb_all_tabs">
+            <div class="et_pb_tab diamonds_list clearfix et_pb_active_content et-pb-moved-slide et-pb-active-slide">
+                <div class="et_pb_tab_content">
+                      <div class="no_owl-viewProduct row product_data_ajax" id="ajax-posts">
+   
+                    <?php  
+
+                    while( $meta_query->have_posts() ) : 
+                    $meta_query->the_post(); 
+                    $product_id=$meta_query->post->ID;  
+                    $product = wc_get_product($product_id);
+
+ 
+                    // product meta
+                    $product_carat=get_post_meta($product_id, 'product_carat', true);
+                    $product_stock_number=get_post_meta($product_id, 'product_stock_number', true);
+
+                    ?>
+          <?php $image = wp_get_attachment_image_src( get_post_thumbnail_id( $meta_query->post->ID ), 'single-post-thumbnail' );?>
+            <div class="col-md-4 diamond_item">
+                <div class="main-info_tooltip pro_info_data<?= $i; ?> bg-secondary p-3 text-white" style="display: none;">
+                    <?php if($product_stock_number): ?>
+                        <h3 class="text-white pb-4"><strong>Stock Number:</strong> <span><?= $product_stock_number; ?></span></h3> 
+                    <?php endif; ?> 
+                    <div class="row">  
+                    <?php   
+                   echo $data = product_meta_function($product_id,'product_carat','Carat');
+                   echo '<div class="item_list_uniq mb-3 col-md-4">    
+                    <strong>Color</strong>
+                    <div class="unbold1">'.product_color($product_id,'product_color').'</div>
+                    </div>'; 
+
+                    echo '<div class="item_list_uniq mb-3 col-md-4">    
+                    <strong>Clarity</strong>
+                    <div class="unbold1">'.product_clarity($product_id,'product_clarity').'</div>
+                    </div>'; 
+
+                    echo '<div class="item_list_uniq mb-3 col-md-4">    
+                    <strong>Cut</strong>
+                    <div class="unbold1">'.product_cut($product_id,'product_cut').'</div>
+                    </div>'; 
+
+                    echo '<div class="item_list_uniq mb-3 col-md-4">    
+                    <strong>Polish</strong>
+                    <div class="unbold1">'.product_polish($product_id,'product_polish').'</div>
+                    </div>'; 
+ 
+                    echo '<div class="item_list_uniq mb-3 col-md-4">    
+                    <strong>Symmetry</strong>
+                    <div class="unbold1">'.product_symmetry($product_id,'product_symmetry').'</div>
+                    </div>'; 
+   
+                
+                      echo  product_meta_function($product_id,'product_symmetry','Symmetry');
+                      echo  product_meta_function($product_id,'product_fluorescence','Fluorescence');
+                      echo  product_meta_function($product_id,'product_measurement','Measurement');
+                      echo product_meta_function($product_id,'product_certification','Certification');
+
+                    ?> 
+                     </div> 
+                    </div>   
+                <div class="owlCarousel-viewProduct">
+                    <div class="viewProduct_body">
+                    <?php if($image[0]){ ?>
+                         <img src="<?php  echo $image[0]; ?>" data-id="<?php echo $meta_query->post->ID; ?>" style="">
+                    <?php } else { ?>
+                         <img src="<?= site_url(); ?>/wp-content/uploads/woocommerce-placeholder-300x300.png" data-id="<?php echo $meta_query->post->ID; ?>" style="">
+
+                    <?php } ?>
+                        <h3><a href="<?= get_permalink(); ?>" class="viewProduct_title">
+                            <?php echo get_the_title(); ?> </a></h3>
+                        
+                        <span class="product-price mt-2 d-inline-block"><?= wc_price($product->get_price());?></span>
+                    </div>
+                    <div class="viewProduct_footer">
+                        <a href="<?= get_permalink(); ?>" class="cart-Btn">Add to Cart</a>
+                        <a href="javascript:void(0);" class="pro_more_info<?= $i; ?> cart-Btn cart_01 text-primary"><i class="fa fa-info-circle"></i> <span class="d-inline-block pl-2">More Info</span></a>
+                    </div> 
+                </div>
+
+            </div>
+            <?php $i++; endwhile ;
+                     else : 
+                endif; ?>  
+            
+            
+            
+        </div>
+                </div>
+            </div>
+
+                <div class="et_pb_tab recently_view_list clearfix">
+                <div class="et_pb_tab_content">
+                  <div class="ds-infinite-scroll-wrap-list">
+                       <?php $recently_viewed_products=do_shortcode('[woocommerce_recently_viewed_products]'); ?>
+                    <?php if($recently_viewed_products !== "nodata"): ?>
+                    <table class="table brl-table table-bordered" >
+                        <thead >
+                            <tr >
+                                <th class="hidden-xs" >Title</th>
+                                <th >Image</th>
+                                <th class="hidden-xs" >Shape</th>
+                                <th >Carat</th>
+                                <th class="hidden-xs" >Color</th>
+                                <th class="hidden-xs" >Clarity</th>
+                                <th >Cut</th>
+                                <th class="hidden-xs" >Report</th>
+                                <th class="hidden-xs" >Our Price</th>
+                                <th class="hidden-xs" >Details</th>
+                            </tr>
+                        </thead>
+                        <?= $recently_viewed_products; ?>
+                    </table>
+                <?php else: ?>
+                    <div class="no_data_found">
+                        <i class="fas fa-cogs"></i>
+                         <strong>NO RESULTS</strong>
+                    <p>There are currently no recently viewed diamonds.</p>
+                    </div>
+ 
+                <?php endif; ?>
+                </div> 
+                </div> 
+
+                </div>
+
+
+            <div class="et_pb_tab compare_list clearfix">
+                <div class="et_pb_tab_content">
+                  <div class="ds-infinite-scroll-wrap-list">
+                     <?php $compare_products=do_shortcode('[compare_products]'); ?>
+                    <?php if($compare_products !== "nodata"): ?>
+                    <table class="table brl-table table-bordered" >
+                        
+                        <thead >
+                            <tr >
+                                <th class="hidden-xs" >Title</th>
+                                <th >Image</th>
+                                <th class="hidden-xs" >Shape</th>
+                                <th >Carat</th>
+                                <th class="hidden-xs" >Color</th>
+                                <th class="hidden-xs" >Clarity</th>
+                                <th >Cut</th>
+                                <th class="hidden-xs" >Report</th>
+                                <th class="hidden-xs" >Our Price</th>
+                                <th class="hidden-xs" >Details</th>
+                            </tr>
+                        </thead>
+                        <?=  $compare_products; ?>
+                    </table>
+                <?php else: ?>
+                    <div class="no_data_found">
+                        <i class="fas fa-cogs"></i>
+                         <strong>NO RESULTS</strong>
+                    <p>There are currently no diamonds in your comparison. Please go back to the Diamond Search &amp; select which diamonds you would like to compare.</p>
+                    </div>
+
+                <?php endif; ?>
+                  </div>
+                </div> 
+
+                </div>
+            </div>
+        </div> 
+ </div> 
+     <div id="more_posts" style="display:none;">Load More</div>
+
+
+      
+    </div>
+</section> 
+ 
+</div></div>
+
+
+<?php get_footer(); ?>
